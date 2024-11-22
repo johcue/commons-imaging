@@ -182,6 +182,8 @@
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
             <excludes>
+              <exclude>Oracle_JDK-23/lib/jrt-fs.jar</exclude>
+              <exclude>Oracle_JDK-23/lib/src.zip</exclude>
               <exclude>src/test/resources/images/**/*</exclude>
               <exclude>src/test/resources/IMAGING-*/*</exclude>
               <exclude>src/test/**/*.xpm</exclude>
