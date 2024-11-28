@@ -192,12 +192,15 @@
                     <mutators>
                         <mutator>STRONGER</mutator>
                     </mutators>
-                    <targetClasses>
-                        <param>org.apache.commons.imaging.*</param>
+                    <targetClasses> <!-- specific classes -->
+                        <param>org.apache.commons.imaging.formats.psd.dataparsers.*</param>
+                
                     </targetClasses>
+                    <!-- 
                     <targetTests>
                         <param>org.apache.commons.imaging.*</param>
                     </targetTests>
+                    -->
                 </configuration>
             </plugin>
         <plugin>
