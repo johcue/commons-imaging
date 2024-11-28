@@ -193,8 +193,12 @@
                         <mutator>STRONGER</mutator>
                     </mutators>
                     <targetClasses> <!-- specific classes -->
+                        <param>org.apache.commons.imaging.internal.*</param>
+                        <!--
+                        <param>org.apache.commons.imaging.formats.tiff.TiffDirectory</param>
                         <param>org.apache.commons.imaging.formats.psd.dataparsers.*</param>
-                
+                        <param>org.apache.commons.imaging.internal.*</param>
+                        -->
                     </targetClasses>
                     <!-- 
                     <targetTests>
