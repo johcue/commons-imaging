@@ -17,7 +17,7 @@ name: CI with Code Coverage
 on:
   push:
     branches:
-      - jacoco # main 
+      - jacoco2 # main 
   pull_request:
 
 jobs:
