@@ -102,7 +102,7 @@ public abstract class AbstractImageParser<T extends ImagingParameters<T>> extend
         // defaults to big-endian
     }
 
-    public AbstractImageParser(final ByteOrder byteOrder) {
+    protected AbstractImageParser(final ByteOrder byteOrder) {
         super(byteOrder);
     }
 
