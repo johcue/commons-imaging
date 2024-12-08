@@ -1,0 +1,41 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+ Volume in drive C is OS
+ Volume Serial Number is 6D59-BE30
+
+ Directory of C:\IoT\SwD\Project\commons-imaging
+
+29/11/2024  12:20    <DIR>          .
+29/11/2024  11:54    <DIR>          ..
+29/11/2024  12:05             1.543 .asf.yaml
+29/11/2024  12:05    <DIR>          .github
+29/11/2024  12:05               297 .gitignore
+29/11/2024  12:05             1.374 checkstyle-suppressions.xml
+29/11/2024  12:05               946 CODE_OF_CONDUCT.md
+29/11/2024  12:05             6.740 CONTRIBUTING.md
+29/11/2024  12:20                 0 dir.txt
+29/11/2024  12:14             1.048 Dockerfile
+29/11/2024  12:05            14.356 LICENSE.txt
+29/11/2024  12:05               182 NOTICE.txt
+29/11/2024  12:14            18.068 pom.xml
+29/11/2024  12:14         7.503.092 randoop-all-4.3.3.jar
+29/11/2024  12:14    <DIR>          randoop-tests
+29/11/2024  12:05             6.502 README.md
+29/11/2024  12:05            31.762 RELEASE-NOTES.txt
+29/11/2024  12:14    <DIR>          scripts
+29/11/2024  12:05               917 SECURITY.md
+29/11/2024  12:05    <DIR>          src
+              14 File(s)      7.586.827 bytes
+               6 Dir(s)  693.732.458.496 bytes free

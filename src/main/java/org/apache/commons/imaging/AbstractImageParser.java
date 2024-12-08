@@ -98,7 +98,7 @@ public abstract class AbstractImageParser<T extends ImagingParameters<T>> extend
         );
     }
 
-    public AbstractImageParser() {
+    protected AbstractImageParser() {
         // defaults to big-endian
     }
 
