@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+<<<<<<< HEAD:.github/workflows/maven.yml
 name: Maven CI
 
 on:
@@ -46,3 +47,6 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
+=======
+test codecov
+>>>>>>> e9b8ce5304e9a049c326a6d3fa8872fb3d07b6fb:new 1.txt
