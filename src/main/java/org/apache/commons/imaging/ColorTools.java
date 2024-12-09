@@ -132,7 +132,6 @@ public class ColorTools {
     }
 
     public ColorModel deriveColorModel(final BufferedImage bi, final ColorSpace cs) throws ImagingOpException {
-        // boolean hasAlpha = (bi.getAlphaRaster() != null);
         return deriveColorModel(bi, cs, false);
     }
 
