@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
-import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageBuilder;
 
 abstract class AbstractPixelParser {
@@ -42,14 +41,14 @@ abstract class AbstractPixelParser {
 
     int getColorTableRgb(final int index) {
         final int actual = index * 4;
-        final int blue = 0xff & colorTable[actual + 0];
+        final int blue = 0xff & colorTable[actual];
         final int green = 0xff & colorTable[actual + 1];
         final int red = 0xff & colorTable[actual + 2];
         final int alpha = 0xff;
 
-        return alpha << 24 | red << 16 | green << 8 | blue << 0;
+        return alpha << 24 | red << 16 | green << 8 | blue;
     }
 
-    public abstract void processImage(ImageBuilder imageBuilder) throws ImagingException, IOException;
+    public abstract void processImage(ImageBuilder imageBuilder) throws IOException;
 
 }
