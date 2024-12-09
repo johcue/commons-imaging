@@ -260,7 +260,6 @@ public abstract class AbstractImageParser<T extends ImagingParameters<T>> extend
 
         final List<BufferedImage> result = new ArrayList<>();
 
-        // FIXME this doesn't look like we're actually getting all images contained in the given ByteSource...
         result.add(bi);
 
         return result;
@@ -276,7 +275,7 @@ public abstract class AbstractImageParser<T extends ImagingParameters<T>> extend
      */
     public final List<BufferedImage> getAllBufferedImages(final File file) throws ImagingException, IOException {
         if (!canAcceptExtension(file)) {
-            return null;
+            return new ArrayList<>();
         }
 
         return getAllBufferedImages(ByteSource.file(file));
@@ -469,7 +468,7 @@ public abstract class AbstractImageParser<T extends ImagingParameters<T>> extend
      */
     public final byte[] getIccProfileBytes(final File file, final T params) throws ImagingException, IOException {
         if (!canAcceptExtension(file)) {
-            return null;
+            return new byte[0];
         }
 
         if (LOGGER.isLoggable(Level.FINEST)) {
