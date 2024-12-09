@@ -195,6 +195,9 @@
               <exclude>src/test/**/*.hdr</exclude>
               <exclude>src/main/resources/org/apache/commons/imaging/formats/xpm/rgb.txt</exclude>
               <exclude>.asf.yaml</exclude>
+              <exclude>maven.yml</exclude>
+              <exclude>Dockerfile</exclude>
+              <exclude>create_jira_issues.py</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -339,6 +342,9 @@
             <exclude>src/test/data/**/*.hdr</exclude>
             <exclude>src/main/resources/org/apache/commons/imaging/formats/xpm/rgb.txt</exclude>
             <exclude>.asf.yaml</exclude>
+            <exclude>maven.yml</exclude>
+            <exclude>Dockerfile</exclude>
+            <exclude>create_jira_issues.py</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -383,7 +389,7 @@
       <email>ggregory at apache.org</email>
       <url>https://www.garygregory.com</url>
       <organization>The Apache Software Foundation</organization>
-      <organizationUrl>https://www.apache.org/</organizationUrl>      
+      <organizationUrl>https://www.apache.org/</organizationUrl>
       <roles>
         <role>PMC Member</role>
       </roles>
