@@ -29,7 +29,7 @@ import org.apache.commons.imaging.formats.tiff.TiffField;
  * TIFF field types.
  */
 public abstract class AbstractFieldType {
-    public static AbstractFieldType x = null;
+    private static AbstractFieldType x = null;
 
     private static AbstractFieldType createByteFieldTypeByName(String name) {
         if(Objects.equals(name, "BYTE")){
