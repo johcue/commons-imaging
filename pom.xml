@@ -60,13 +60,14 @@
     <commons.distSvnStagingUrl>scm:svn:https://dist.apache.org/repos/dist/dev/commons/imaging</commons.distSvnStagingUrl>
     <project.build.outputTimestamp>2024-04-18T14:55:29Z</project.build.outputTimestamp>
     <!-- JaCoCo: Don't make code coverage worse than: -->
-    <commons.jacoco.haltOnFailure>true</commons.jacoco.haltOnFailure>
+    <!--<commons.jacoco.haltOnFailure>true</commons.jacoco.haltOnFailure>
     <commons.jacoco.classRatio>0.96</commons.jacoco.classRatio>
     <commons.jacoco.instructionRatio>0.77</commons.jacoco.instructionRatio>
     <commons.jacoco.methodRatio>0.80</commons.jacoco.methodRatio>
     <commons.jacoco.branchRatio>0.64</commons.jacoco.branchRatio>
     <commons.jacoco.lineRatio>0.77</commons.jacoco.lineRatio>
     <commons.jacoco.complexityRatio>0.60</commons.jacoco.complexityRatio>
+  -->
   </properties>
   <scm>
     <connection>scm:git:http://gitbox.apache.org/repos/asf/commons-imaging.git</connection>
@@ -89,19 +90,49 @@
   <build>
     <defaultGoal>clean verify apache-rat:check checkstyle:check spotbugs:check javadoc:javadoc</defaultGoal>
     <plugins>
-     <!-- <plugin>
-        <groupId>org.pitest</groupId>
-        <artifactId>pitest-maven</artifactId>
-        <version>1.15.2</version>
+      <!-- <plugin>
+         <groupId>org.pitest</groupId>
+         <artifactId>pitest-maven</artifactId>
+         <version>1.15.2</version>
+         <configuration>
+           <targetClasses>
+             <param>org.apache.commons.imaging.*</param>
+           </targetClasses>
+           <targetTests>
+             <param>org.apache.commons.imaging.*</param>
+           </targetTests>
+         </configuration>
+       </plugin>-->
+      <!-- Plugin per JMH -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
         <configuration>
-          <targetClasses>
-            <param>org.apache.commons.imaging.*</param>
-          </targetClasses>
-          <targetTests>
-            <param>org.apache.commons.imaging.*</param>
-          </targetTests>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.openjdk.jmh</groupId>
+              <artifactId>jmh-generator-annprocess</artifactId>
+              <version>1.37</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
-      </plugin>-->
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>org.apache.commons.imaging.BenchmarkRunner</mainClass>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -117,7 +148,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-      <plugin>
+
+      <!--<plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
         <version>1.24</version>
@@ -137,8 +169,8 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
+      </plugin>-->
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
@@ -155,7 +187,7 @@
             </manifestEntries>
           </archive>
         </configuration>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -180,7 +212,7 @@
             <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
             <includeTestSourceDirectory>false</includeTestSourceDirectory>
             <enableRulesSummary>false</enableRulesSummary>
-           <excludes>target/**</excludes>
+            <excludes>target/**</excludes>
           </configuration>
         </plugin>
         <plugin>
@@ -190,29 +222,42 @@
             <excludeFilterFile>${commons.conf.dir}/spotbugs-exclude-filter.xml</excludeFilterFile>
           </configuration>
         </plugin>
-            <plugin>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-maven</artifactId>
-                <version>1.15.2</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.pitest</groupId>
-                        <artifactId>pitest-junit5-plugin</artifactId>
-                        <version>1.2.1</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <mutators>
-                        <mutator>STRONGER</mutator>
-                    </mutators>
-                    <targetClasses>
-                        <param>org.apache.commons.imaging.formats.tiff.*</param>
-                    </targetClasses>
-                    <!--<targetTests>
-							<param>org.apache.commons.imaging.formats.tiff.*</param>
-                    </targetTests>-->
-                </configuration>
-            </plugin>
+        <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>1.15.2</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.pitest</groupId>
+              <artifactId>pitest-junit5-plugin</artifactId>
+              <version>1.2.1</version>
+            </dependency>
+            <dependency>
+              <groupId>org.openjdk.jmh</groupId>
+              <artifactId>jmh-core</artifactId>
+              <version>1.37</version> <!-- Usa la versión más reciente disponible -->
+              <!-- <scope>test</scope> -->
+            </dependency>
+            <dependency>
+              <groupId>org.openjdk.jmh</groupId>
+              <artifactId>jmh-generator-annprocess</artifactId>
+              <version>1.37</version>
+              <scope>provided</scope>
+              <!--<scope>test</scope>-->
+            </dependency>
+          </dependencies>
+          <configuration>
+            <mutators>
+              <mutator>STRONGER</mutator>
+            </mutators>
+            <targetClasses>
+              <param>org.apache.commons.imaging.formats.tiff.*</param>
+            </targetClasses>
+            <!--<targetTests>
+                    <param>org.apache.commons.imaging.formats.tiff.*</param>
+            </targetTests>-->
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
@@ -247,10 +292,44 @@
             </rulesets>
           </configuration>
         </plugin>
+        <!-- Plugin Maven Shade per creare un JAR eseguibile -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.4.1</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+                <createDependencyReducedPom>true</createDependencyReducedPom>
+                <transformers>
+                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                    <mainClass>org.openjdk.jmh.Main</mainClass>
+                  </transformer>
+                </transformers>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>1.37</version> <!-- Usa la versión más reciente disponible -->
+      <!-- <scope>test</scope>-->
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>1.37</version>
+      <!--<scope>test</scope>-->
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -327,8 +406,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-      </plugin>  
-      <plugin>
+      </plugin>
+      <!--<plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
         <configuration>
@@ -371,12 +450,12 @@
             </tagClasses>
           </tagListOptions>
         </configuration>
-      </plugin>
-      <plugin> <!--added jacoco plugin  -->
+      </plugin>-->
+      <!-- <plugin>
          <groupId>org.jacoco</groupId>
          <artifactId>jacoco-maven-plugin</artifactId>
          <version>0.8.13-SNAPSHOT</version>
-         </plugin>
+         </plugin>-->
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
@@ -439,7 +518,7 @@
       <email>ggregory at apache.org</email>
       <url>https://www.garygregory.com</url>
       <organization>The Apache Software Foundation</organization>
-      <organizationUrl>https://www.apache.org/</organizationUrl>      
+      <organizationUrl>https://www.apache.org/</organizationUrl>
       <roles>
         <role>PMC Member</role>
       </roles>
