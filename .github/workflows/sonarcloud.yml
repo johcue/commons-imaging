@@ -16,7 +16,7 @@ name: SonarCloud
 
 on:
   push:
-    branches: [ main ] # jacoco
+    branches: [ main ] 
   pull_request:
     branches: [ main ]
 
