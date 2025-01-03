@@ -1,0 +1,65 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 17
+Bundle-Description: Apache Commons Imaging (previously Sanselan) is a pu
+ re-Java image library.
+Bundle-DocURL: https://commons.apache.org/proper/commons-imaging/
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Commons Imaging
+Bundle-SymbolicName: org.apache.commons.commons-imaging
+Bundle-Vendor: The Apache Software Foundation
+Bundle-Version: 1.0.0.alpha6-SNAPSHOT
+Created-By: Apache Maven Bundle Plugin 5.1.9
+Export-Package: org.apache.commons.imaging;version="1.0.0.alpha6-SNAPSHO
+ T",org.apache.commons.imaging.bytesource;version="1.0.0.alpha6-SNAPSHOT
+ ",org.apache.commons.imaging.color;version="1.0.0.alpha6-SNAPSHOT",org.
+ apache.commons.imaging.common;version="1.0.0.alpha6-SNAPSHOT",org.apach
+ e.commons.imaging.formats.bmp;version="1.0.0.alpha6-SNAPSHOT",org.apach
+ e.commons.imaging.formats.dcx;version="1.0.0.alpha6-SNAPSHOT",org.apach
+ e.commons.imaging.formats.gif;version="1.0.0.alpha6-SNAPSHOT",org.apach
+ e.commons.imaging.formats.icns;version="1.0.0.alpha6-SNAPSHOT",org.apac
+ he.commons.imaging.formats.ico;version="1.0.0.alpha6-SNAPSHOT",org.apac
+ he.commons.imaging.formats.jpeg;version="1.0.0.alpha6-SNAPSHOT",org.apa
+ che.commons.imaging.formats.jpeg.decoder;version="1.0.0.alpha6-SNAPSHOT
+ ",org.apache.commons.imaging.formats.jpeg.exif;version="1.0.0.alpha6-SN
+ APSHOT",org.apache.commons.imaging.formats.jpeg.iptc;version="1.0.0.alp
+ ha6-SNAPSHOT",org.apache.commons.imaging.formats.jpeg.segments;version=
+ "1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.jpeg.xmp;ver
+ sion="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.pcx;ver
+ sion="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.png;ver
+ sion="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.png.chu
+ nks;version="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.
+ png.scanlinefilters;version="1.0.0.alpha6-SNAPSHOT",org.apache.commons.
+ imaging.formats.png.transparencyfilters;version="1.0.0.alpha6-SNAPSHOT"
+ ,org.apache.commons.imaging.formats.pnm;version="1.0.0.alpha6-SNAPSHOT"
+ ,org.apache.commons.imaging.formats.psd;version="1.0.0.alpha6-SNAPSHOT"
+ ,org.apache.commons.imaging.formats.psd.dataparsers;version="1.0.0.alph
+ a6-SNAPSHOT",org.apache.commons.imaging.formats.psd.datareaders;version
+ ="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.rgbe;versio
+ n="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.tiff;versi
+ on="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.tiff.cons
+ tants;version="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.format
+ s.tiff.datareaders;version="1.0.0.alpha6-SNAPSHOT",org.apache.commons.i
+ maging.formats.tiff.fieldtypes;version="1.0.0.alpha6-SNAPSHOT",org.apac
+ he.commons.imaging.formats.tiff.itu_t4;version="1.0.0.alpha6-SNAPSHOT",
+ org.apache.commons.imaging.formats.tiff.photometricinterpreters;version
+ ="1.0.0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.tiff.photom
+ etricinterpreters.floatingpoint;version="1.0.0.alpha6-SNAPSHOT",org.apa
+ che.commons.imaging.formats.tiff.taginfos;version="1.0.0.alpha6-SNAPSHO
+ T",org.apache.commons.imaging.formats.tiff.write;version="1.0.0.alpha6-
+ SNAPSHOT",org.apache.commons.imaging.formats.wbmp;version="1.0.0.alpha6
+ -SNAPSHOT",org.apache.commons.imaging.formats.webp;version="1.0.0.alpha
+ 6-SNAPSHOT",org.apache.commons.imaging.formats.webp.chunks;version="1.0
+ .0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.xbm;version="1.0
+ .0.alpha6-SNAPSHOT",org.apache.commons.imaging.formats.xpm;version="1.0
+ .0.alpha6-SNAPSHOT",org.apache.commons.imaging.icc;version="1.0.0.alpha
+ 6-SNAPSHOT",org.apache.commons.imaging.internal;version="1.0.0.alpha6-S
+ NAPSHOT",org.apache.commons.imaging.mylzw;version="1.0.0.alpha6-SNAPSHO
+ T",org.apache.commons.imaging.palette;version="1.0.0.alpha6-SNAPSHOT"
+Import-Package: javax.imageio,org.apache.commons.io,org.apache.commons.i
+ o.build,org.apache.commons.io.output
+Include-Resource: org/apache/commons/imaging/formats/xpm/rgb.txt=src/mai
+ n/resources/org/apache/commons/imaging/formats/xpm/rgb.txt,META-INF/LIC
+ ENSE.txt=LICENSE.txt,META-INF/NOTICE.txt=NOTICE.txt
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Tool: Bnd-6.4.1.202306080939

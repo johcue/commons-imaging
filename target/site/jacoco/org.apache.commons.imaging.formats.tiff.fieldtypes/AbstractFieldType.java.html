@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFieldType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Apache Commons Imaging</a> &gt; <a href="index.source.html" class="el_package">org.apache.commons.imaging.formats.tiff.fieldtypes</a> &gt; <span class="el_source">AbstractFieldType.java</span></div><h1>AbstractFieldType.java</h1><pre class="source lang-java linenums">/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the &quot;License&quot;); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.imaging.formats.tiff.fieldtypes;
+
+import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.commons.imaging.ImagingException;
+import org.apache.commons.imaging.formats.tiff.TiffField;
+
+/**
+ * TIFF field types.
+ */
+public abstract class AbstractFieldType {
+<span class="fc" id="L32">    private static AbstractFieldType x = null;</span>
+
+    private static AbstractFieldType createByteFieldTypeByName(String name) {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if(Objects.equals(name, &quot;BYTE&quot;)){</span>
+<span class="fc" id="L36">            x =  new FieldTypeByte(1, &quot;Byte&quot;);</span>
+        }
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if(Objects.equals(name, &quot;ASCII&quot;)){</span>
+<span class="fc" id="L39">            x =  new FieldTypeAscii(2, &quot;ASCII&quot;);</span>
+        }
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if(Objects.equals(name, &quot;Short&quot;)){</span>
+<span class="fc" id="L42">            x =  new FieldTypeShort(3, &quot;Short&quot;);</span>
+        }
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if(Objects.equals(name, &quot;Long&quot;)){</span>
+<span class="fc" id="L45">            x =  new FieldTypeLong(4, &quot;Long&quot;);</span>
+        }
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if(Objects.equals(name, &quot;Rational&quot;)){</span>
+<span class="fc" id="L48">            x =  new FieldTypeRational(5, &quot;Rational&quot;);</span>
+        }
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if(Objects.equals(name, &quot;SByte&quot;)){</span>
+<span class="fc" id="L51">            x =  new FieldTypeByte(6, &quot;SByte&quot;);</span>
+        }
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if(Objects.equals(name, &quot;Undefined&quot;)){</span>
+<span class="fc" id="L54">            x =  new FieldTypeByte(7, &quot;Undefined&quot;);</span>
+        }
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if(Objects.equals(name, &quot;SShort&quot;)){</span>
+<span class="fc" id="L57">            x =  new FieldTypeShort(8, &quot;SShort&quot;);</span>
+        }
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if(Objects.equals(name, &quot;SLong&quot;)){</span>
+<span class="fc" id="L60">            x =  new FieldTypeLong(9, &quot;SLong&quot;);</span>
+        }
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if(Objects.equals(name, &quot;SRational&quot;)){</span>
+<span class="fc" id="L63">            x =  new FieldTypeRational(10, &quot;SRational&quot;);</span>
+        }
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if(Objects.equals(name, &quot;Float&quot;)){</span>
+<span class="fc" id="L66">            x =  new FieldTypeFloat(11, &quot;Float&quot;);</span>
+        }
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if(Objects.equals(name, &quot;Double&quot;)){</span>
+<span class="fc" id="L69">            x =  new FieldTypeDouble(12, &quot;Double&quot;);</span>
+        }
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if(Objects.equals(name, &quot;IFD&quot;)){</span>
+<span class="fc" id="L72">            x =  new FieldTypeLong(13, &quot;IFD&quot;);</span>
+        }
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if(Objects.equals(name, &quot;Long8&quot;)){</span>
+<span class="fc" id="L75">            x =  new FieldTypeLong8(16, &quot;Long8&quot;);</span>
+        }
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if(Objects.equals(name, &quot;SLong8&quot;)){</span>
+<span class="fc" id="L78">            x =  new FieldTypeLong8(17, &quot;SLong8&quot;);</span>
+        }
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if(Objects.equals(name, &quot;IFD8&quot;)){</span>
+<span class="fc" id="L81">            x =  new FieldTypeLong8(18, &quot;IFD8&quot;);</span>
+        }
+
+<span class="fc" id="L84">        return x;</span>
+    }
+<span class="fc" id="L86">    public static final AbstractFieldType BYTE = createByteFieldTypeByName(&quot;BYTE&quot;);</span>
+<span class="fc" id="L87">    public static final AbstractFieldType ASCII = createByteFieldTypeByName(&quot;ASCII&quot;);</span>
+<span class="fc" id="L88">    public static final AbstractFieldType SHORT = createByteFieldTypeByName(&quot;Short&quot;);</span>
+<span class="fc" id="L89">    public static final AbstractFieldType LONG = createByteFieldTypeByName(&quot;Long&quot;);</span>
+<span class="fc" id="L90">    public static final AbstractFieldType RATIONAL = createByteFieldTypeByName(&quot;Rational&quot;);</span>
+<span class="fc" id="L91">    public static final AbstractFieldType SBYTE = createByteFieldTypeByName(&quot;SByte&quot;);</span>
+<span class="fc" id="L92">    public static final AbstractFieldType UNDEFINED = createByteFieldTypeByName(&quot;Undefined&quot;);</span>
+<span class="fc" id="L93">    public static final AbstractFieldType SSHORT = createByteFieldTypeByName(&quot;SShort&quot;);</span>
+<span class="fc" id="L94">    public static final AbstractFieldType SLONG = createByteFieldTypeByName(&quot;SLong&quot;);</span>
+<span class="fc" id="L95">    public static final AbstractFieldType SRATIONAL = createByteFieldTypeByName(&quot;SRational&quot;);</span>
+<span class="fc" id="L96">    public static final AbstractFieldType FLOAT = createByteFieldTypeByName(&quot;Float&quot;);</span>
+<span class="fc" id="L97">    public static final AbstractFieldType DOUBLE = createByteFieldTypeByName(&quot;Double&quot;);</span>
+<span class="fc" id="L98">    public static final AbstractFieldType IFD = createByteFieldTypeByName(&quot;IFD&quot;);</span>
+<span class="fc" id="L99">    public static final AbstractFieldType LONG8 = createByteFieldTypeByName(&quot;Long8&quot;);</span>
+<span class="fc" id="L100">    public static final AbstractFieldType SLONG8 = createByteFieldTypeByName(&quot;SLong8&quot;);</span>
+<span class="fc" id="L101">    public static final AbstractFieldType IFD8 = createByteFieldTypeByName(&quot;IFD8&quot;);</span>
+
+<span class="fc" id="L103">    public static final List&lt;AbstractFieldType&gt; ANY = Collections.unmodifiableList(</span>
+<span class="fc" id="L104">            Arrays.asList(BYTE, ASCII, SHORT, LONG, RATIONAL, SBYTE, UNDEFINED, SSHORT, SLONG, SRATIONAL, FLOAT, DOUBLE, IFD, LONG8, SLONG8, IFD8));</span>
+<span class="fc" id="L105">    public static final List&lt;AbstractFieldType&gt; SHORT_OR_LONG = Collections.unmodifiableList(Arrays.asList(SHORT, LONG));</span>
+<span class="fc" id="L106">    public static final List&lt;AbstractFieldType&gt; SHORT_OR_RATIONAL = Collections.unmodifiableList(Arrays.asList(SHORT, RATIONAL));</span>
+
+<span class="fc" id="L108">    public static final List&lt;AbstractFieldType&gt; SHORT_OR_LONG_OR_RATIONAL = Collections.unmodifiableList(Arrays.asList(SHORT, LONG, RATIONAL));</span>
+
+
+<span class="fc" id="L111">    public static final List&lt;AbstractFieldType&gt; BYTE_OR_SHORT = Collections.unmodifiableList(Arrays.asList(SHORT, BYTE));</span>
+
+<span class="fc" id="L113">    public static final List&lt;AbstractFieldType&gt; LONG_OR_IFD = Collections.unmodifiableList(Arrays.asList(LONG, IFD));</span>
+
+<span class="fc" id="L115">    public static final List&lt;AbstractFieldType&gt; ASCII_OR_RATIONAL = Collections.unmodifiableList(Arrays.asList(ASCII, RATIONAL));</span>
+
+<span class="fc" id="L117">    public static final List&lt;AbstractFieldType&gt; ASCII_OR_BYTE = Collections.unmodifiableList(Arrays.asList(ASCII, BYTE));</span>
+
+    public static AbstractFieldType getFieldType(final int type) throws ImagingException {
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        for (final AbstractFieldType abstractFieldType : ANY) {</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if (abstractFieldType.getType() == type) {</span>
+<span class="fc" id="L122">                return abstractFieldType;</span>
+            }
+<span class="fc" id="L124">        }</span>
+<span class="fc" id="L125">        throw new ImagingException(&quot;Field type &quot; + type + &quot; is unsupported&quot;);</span>
+    }
+
+    private final int type;
+
+    private final String name;
+
+    private final int elementSize;
+
+<span class="fc" id="L134">    protected AbstractFieldType(final int type, final String name, final int elementSize) {</span>
+<span class="fc" id="L135">        this.type = type;</span>
+<span class="fc" id="L136">        this.name = name;</span>
+<span class="fc" id="L137">        this.elementSize = elementSize;</span>
+<span class="fc" id="L138">    }</span>
+
+    public String getName() {
+<span class="fc" id="L141">        return name;</span>
+    }
+
+    public int getSize() {
+<span class="fc" id="L145">        return elementSize;</span>
+    }
+
+    public int getType() {
+<span class="fc" id="L149">        return type;</span>
+    }
+
+    public abstract Object getValue(TiffField entry);
+
+    public abstract byte[] writeData(Object o, ByteOrder byteOrder) throws ImagingException;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

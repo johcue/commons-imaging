@@ -167,7 +167,7 @@ public class BmpImageParser extends AbstractImageParser<BmpImagingParameters> {
 
     @Override
     public byte[] getIccProfileBytes(final ByteSource byteSource, final BmpImagingParameters params) {
-        return new byte[0];
+        return null;
     }
 
     @Override

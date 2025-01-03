@@ -1,0 +1,571 @@
+{
+  "bomFormat" : "CycloneDX",
+  "specVersion" : "1.6",
+  "serialNumber" : "urn:uuid:52100998-3da7-3234-a2f6-02d5a9aa36c2",
+  "version" : 1,
+  "metadata" : {
+    "lifecycles" : [
+      {
+        "phase" : "build"
+      }
+    ],
+    "tools" : {
+      "components" : [
+        {
+          "type" : "library",
+          "author" : "OWASP Foundation",
+          "group" : "org.cyclonedx",
+          "name" : "cyclonedx-maven-plugin",
+          "version" : "2.9.0",
+          "description" : "CycloneDX Maven plugin",
+          "hashes" : [
+            {
+              "alg" : "MD5",
+              "content" : "dfaeab7ec837ce07874e2ee66fdc57d3"
+            },
+            {
+              "alg" : "SHA-1",
+              "content" : "8bab47bafc8183d0a5f37790ff55ed05ead1ae2d"
+            },
+            {
+              "alg" : "SHA-256",
+              "content" : "67117e03eae4a03ca8bab3add044995f4899aa21798a2510b8265ef8101e90ac"
+            },
+            {
+              "alg" : "SHA-512",
+              "content" : "ae6b706516bb76da806b7854aef9e348fa593f5159ae9d693ad38942165c0ebc0846d977a477f6029612d43468fd2cd73a5aa253c228a94fb8d184e0acefc3d2"
+            },
+            {
+              "alg" : "SHA-384",
+              "content" : "ee872354d8b0dcd6f9835a913b3aaba70d9365a46043be78020183282a1e9fca812e969246cbe31d642541591b46648b"
+            },
+            {
+              "alg" : "SHA3-384",
+              "content" : "e5167f9e7ceba3b7b4d1900c404543907868745334bedc69cdf79c271727148413033a3b1426b733b7549e612e44adee"
+            },
+            {
+              "alg" : "SHA3-256",
+              "content" : "41fc0bc2275f354e2c7da01041ce73ce677364799cba53920a180aa5d4571c63"
+            },
+            {
+              "alg" : "SHA3-512",
+              "content" : "ed7f97900b09b818dbc0b8a23c00a2843e1bc34e2e8eb5b6df52533af0a15b721de6f7d5c2fd9352b8d4fde768e080053b40a16f0f9f04c336fe9b44abe83fc0"
+            }
+          ]
+        }
+      ]
+    },
+    "component" : {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.commons/commons-imaging@1.0.0-alpha6-SNAPSHOT?type=jar",
+      "publisher" : "The Apache Software Foundation",
+      "group" : "org.apache.commons",
+      "name" : "commons-imaging",
+      "version" : "1.0.0-alpha6-SNAPSHOT",
+      "description" : "Apache Commons Imaging (previously Sanselan) is a pure-Java image library.",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.commons/commons-imaging@1.0.0-alpha6-SNAPSHOT?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://commons.apache.org/proper/commons-imaging/"
+        },
+        {
+          "type" : "build-system",
+          "url" : "https://github.com/apache/commons-parent/actions"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://repository.apache.org/service/local/staging/deploy/maven2"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://issues.apache.org/jira/browse/IMAGING"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "https://mail-archives.apache.org/mod_mbox/commons-user/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://gitbox.apache.org/repos/asf?p=commons-imaging.git"
+        }
+      ]
+    },
+    "properties" : [
+      {
+        "name" : "maven.goal",
+        "value" : "makeAggregateBom"
+      },
+      {
+        "name" : "maven.scopes",
+        "value" : "compile,provided,runtime,system"
+      },
+      {
+        "name" : "cdx:reproducible",
+        "value" : "enabled"
+      }
+    ]
+  },
+  "components" : [
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.junit.platform/junit-platform-console-standalone@1.9.2?type=jar",
+      "group" : "org.junit.platform",
+      "name" : "junit-platform-console-standalone",
+      "version" : "1.9.2",
+      "description" : "Module \"junit-platform-console-standalone\" of JUnit 5.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "66558915c45ac5fbce497ee17fc70405"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "bb856bc86a6e6cd48080546afcaf7a210713ea21"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "004a478c2d40f8f524af27ff579d9459d57beb5c1db8ec1dfb9621cc506f75d3"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "38cd32d406bc59f417b162fde9eef8a6c347b433fa8b4466c6274eb30d61d0fb5971bd44eba790cd771aa385332d5f3ccfc257029ffa7f7edb0b7caa18007df9"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "f4b78ba17a39ab48c630c757c2455068321c0baf6075af627d22c074d973ca74e22ef28768d9bc879eae45f67c1b657b"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "4ddff0230b7d8951df87dd73bd09082ae1a4a76af0a661310ef0ebbbff7882bd7baa6989576e12c514fc5bd7c844fbbe"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "d89fa2796a6dc236dc93ccb1902f2570ef899f506f7c9e7db958d42a800cf53f"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "01e16a741fb693c71984576b6f6651c9a514fb2c5d5750ea9101e429efd0ca04b9793b94151c534eb77adfed593a08d7efa2f44be982af6d8c9cbd4802f72f40"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "EPL-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.junit.platform/junit-platform-console-standalone@1.9.2?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://junit.org/junit5/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/junit-team/junit5"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/commons-io/commons-io@2.18.0?type=jar",
+      "publisher" : "The Apache Software Foundation",
+      "group" : "commons-io",
+      "name" : "commons-io",
+      "version" : "2.18.0",
+      "description" : "The Apache Commons IO library contains utility classes, stream implementations, file filters, file comparators, endian transformation classes, and much more.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "8cce74ccf461cd6502ae04c908eca917"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "44084ef756763795b31c578403dd028ff4a22950"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "f3ca0f8d63c40e23a56d54101c60d5edee136b42d84bfb85bc7963093109cf8b"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "786778529435d8a14ab6ce2176cdf2b9ee6585a71893b785f26257122166dcefc7c4af3f612eda3974b06c16d06fc357178bf28b9b74010e9bc04c33221adc2f"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "4be7ad9b352412ddad3eb00f2e44f1236216d3e713546d34d71f3aa8e589b06636abf22dad0c28e11a0cd7b54ea0496a"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "d003d33c2cd37806d9d8f0576b65fd51fc1f02bfed7716279474556ef98abfaaddb5b5622762b64458bec6b57f77ceca"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "89019fd824ce65aa33554a848dce2ca47f09c3a261fd22c699342d99579e91d9"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "6edaba8f76bd3e96421ae3611fb32414b064c5ef2fdefd7402f3052c5849e06aa6dfdd218a6df97b25cdd7997df0c9d643af960c4294f2e89dffb052b4b9d8cd"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/commons-io/commons-io@2.18.0?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://commons.apache.org/proper/commons-io/"
+        },
+        {
+          "type" : "build-system",
+          "url" : "https://github.com/apache/commons-parent/actions"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://repository.apache.org/service/local/staging/deploy/maven2"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://issues.apache.org/jira/browse/IO"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "https://mail-archives.apache.org/mod_mbox/commons-user/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://gitbox.apache.org/repos/asf?p=commons-io.git"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.openjdk.jmh/jmh-core@1.37?type=jar",
+      "publisher" : "Oracle",
+      "group" : "org.openjdk.jmh",
+      "name" : "jmh-core",
+      "version" : "1.37",
+      "description" : "The jmh is a Java harness for building, running, and analysing nano/micro/macro benchmarks written in Java and other languages targeting the JVM.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "db951a09b14a411f1b642dc6ddc39125"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "896f27e49105b35ea1964319c83d12082e7a79ef"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "dc0eaf2bbf0036a70b60798c785d6e03a9daf06b68b8edb0f1ba9eb3421baeb3"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "8e434cc89f7c8a3035e172675d9f914415039ad8dc403a9f4a306efbe3249c20da0343aa51ebf9e3b9f8ba6746e8544ac561fbcd62f29dbb163b7f10c96c1f34"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "d90f632fccbe1511298a98bbf8757dc654fb4eb021acae9be1f8b679a20451c1e68a59e23f65b32a8f9499d0794a2fa4"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "fd42b91747fb58c0addb3b511bede553d52377d0300a575edadc7cc7bd783b4800e48842e5feae02e0e35c57cefda167"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "ed41476ee9c5de73354ed7218ed69272073805bc7281cbcdd309f43cb0e5bf0d"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "a6aa50ca96076482ca59679527b626d6a87298eeb20ee9f3cddd397f3cac518cf114c9a9ddaad6dfe5c20d168a7f06d39f7a6655ab77b1de7cf8004294f758e3"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "GNU General Public License (GPL), version 2, with the Classpath exception",
+            "url" : "http://openjdk.java.net/legal/gplv2+ce.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.openjdk.jmh/jmh-core@1.37?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://openjdk.java.net/projects/code-tools/jmh/jmh-core/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/openjdk/jmh/jmh-core"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/net.sf.jopt-simple/jopt-simple@5.0.4?type=jar",
+      "group" : "net.sf.jopt-simple",
+      "name" : "jopt-simple",
+      "version" : "5.0.4",
+      "description" : "A Java library for parsing command line options",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "eb0d9dffe9b0eddead68fe678be76c49"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "df26cc58f235f477db07f753ba5a3ab243ebe5789d9f89ecf68dd62ea9a66c28"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "cbc27e0b6da6ae4b6245353d6626d2e3c171c3026a555fa21e8ef61b30714e286db85086d1a57c167016e8a7f07be2a243e34b3ab504b1877806f3bcec5df986"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "5911a03e11958951abf8450de13598f617471e53554ba79e203d6e7af1241022592cc97ad656650415d78c66d6882cfa"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "a9233bbb74d1dcf613f5c55a3239a9c465bca6422c44d25eb77e08d12cdcbb60d98af78f28071b04f6a3963dcdc67bb3"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "9fa8e57de87f425cab9e7e6dbf68c70268c9c3de29fa54b9f2be9e1b164ab368"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "ea3d9c8469b3e3cbfd70616bde82c62685fd54b1970f324e44d58e48d8d60344abd59c06b1f43e8df1e8fc5bce6ff837eb034e2ba3dce499ffadf42ac4b406cc"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "MIT"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/net.sf.jopt-simple/jopt-simple@5.0.4?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://jopt-simple.github.io/jopt-simple"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://github.com/jopt-simple/jopt-simple/issues"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/jopt-simple/jopt-simple"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.commons/commons-math3@3.6.1?type=jar",
+      "publisher" : "The Apache Software Foundation",
+      "group" : "org.apache.commons",
+      "name" : "commons-math3",
+      "version" : "3.6.1",
+      "description" : "The Apache Commons Math project is a library of lightweight, self-contained mathematics and statistics components addressing the most common practical problems not immediately available in the Java programming language or commons-lang.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "5b730d97e4e6368069de1983937c508e"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "e4ba98f1d4b3c80ec46392f25e094a6a2e58fcbf"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "8bc2438b3b4d9a6be4a47a58410b2d4d0e56e05787ab24badab8cbc9075d61857e8d2f0bffedad33f18f8a356541d00f80a8597b5dedb995be8480d693d03226"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "95d1186d9ca06a3ea2e6437ddec3a55698e2493d3e72f6f554746b74fa929892bd71a2ab501a4e7b1ce56b7cd64e7ab4"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "f85bb3e46a00fc4940a3be1331301302b0eb728e2d1fe2c1842d4761e5a0bc7a420c0c705ae60250ca1c7b03d3694b9e"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "919c15ae4b1aef2a58aa6ea4b700bc5562e78dbc382f3393169425ca91ad368c"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "dbe54d586c898cdbd7df6c31c131ca3525db17fcea5c7f5da8cbfe617e2afc667289290c76771ec5c9567a56fb2b177b0a31d67abcc656410c90287da4d88999"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.commons/commons-math3@3.6.1?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://commons.apache.org/proper/commons-math/"
+        },
+        {
+          "type" : "build-system",
+          "url" : "https://continuum-ci.apache.org/"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://repository.apache.org/service/local/staging/deploy/maven2"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "http://issues.apache.org/jira/browse/MATH"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "http://mail-archives.apache.org/mod_mbox/commons-user/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://git-wip-us.apache.org/repos/asf?p=commons-math.git"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.openjdk.jmh/jmh-generator-annprocess@1.37?type=jar",
+      "group" : "org.openjdk.jmh",
+      "name" : "jmh-generator-annprocess",
+      "version" : "1.37",
+      "description" : "JMH benchmark generator, based on annotation processors.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "68593f57af0d1bb87d857904e3cfc4f5"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "da93888682df163144edf9b13d2b78e54166063a"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "6a5604b5b804e0daca1145df1077609321687734a8b49387e49f10557c186c77"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "0e828c394e02ea1c3472cb3b334f4e13f9e7c2e237dd2915d895b277afbd52573ffc824a3850b0808f190407c8644625ea7d06d77e567fd09607514b4d87f77a"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "7f8e96e9de30082a1583cd9694f5bffb7c4222884b07db7ea1d2db461ef503985ef7b8eb6b8b52704c59d6b28addc7b4"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "3a0b77cda16bd979620e3f486d6752178d5163c88bc1b322a5968d40b7ee50a8516c409c9337f4817b3a73702fccb8f5"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "e69559e94de873398363a408a7871d2c0c5f69e06727c2b468a9d92bb1ce60b2"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "5f772be2e9300c7957227f8c4cb5816a7582afe5d2819a2952e5e8183c11cd4925347ff334a1db11bc3bd6151e84dbcd75e1e97b6ef432df5c64317e0c15d450"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "GNU General Public License (GPL), version 2, with the Classpath exception",
+            "url" : "http://openjdk.java.net/legal/gplv2+ce.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.openjdk.jmh/jmh-generator-annprocess@1.37?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://openjdk.java.net/projects/code-tools/jmh/jmh-generator-annprocess/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/openjdk/jmh/jmh-generator-annprocess"
+        }
+      ]
+    }
+  ],
+  "dependencies" : [
+    {
+      "ref" : "pkg:maven/org.apache.commons/commons-imaging@1.0.0-alpha6-SNAPSHOT?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.junit.platform/junit-platform-console-standalone@1.9.2?type=jar",
+        "pkg:maven/commons-io/commons-io@2.18.0?type=jar",
+        "pkg:maven/org.openjdk.jmh/jmh-core@1.37?type=jar",
+        "pkg:maven/org.openjdk.jmh/jmh-generator-annprocess@1.37?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.junit.platform/junit-platform-console-standalone@1.9.2?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/commons-io/commons-io@2.18.0?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.openjdk.jmh/jmh-core@1.37?type=jar",
+      "dependsOn" : [
+        "pkg:maven/net.sf.jopt-simple/jopt-simple@5.0.4?type=jar",
+        "pkg:maven/org.apache.commons/commons-math3@3.6.1?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/net.sf.jopt-simple/jopt-simple@5.0.4?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.apache.commons/commons-math3@3.6.1?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.openjdk.jmh/jmh-generator-annprocess@1.37?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.openjdk.jmh/jmh-core@1.37?type=jar"
+      ]
+    }
+  ]
+}

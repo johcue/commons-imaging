@@ -61,6 +61,11 @@ public class ColorTools {
         hints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
         hints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
 
+        // bi = relabelColorSpace(bi, cs);
+        // dumpColorSpace("\tcs_sRGB", cs_sRGB);
+        // dumpColorSpace("\tColorModel.getRGBdefaultc",
+        // ColorModel.getRGBdefault().getColorSpace());
+
         bi = relabelColorSpace(bi, from);
         final ColorConvertOp op = new ColorConvertOp(from, to, hints);
         bi = op.filter(bi, null);
@@ -81,8 +86,8 @@ public class ColorTools {
     }
 
     protected BufferedImage convertFromColorSpace(final BufferedImage bi, final ColorSpace from) {
-        final ColorModel singsCM = ColorModel.getRGBdefault();
-        return convertBetweenColorSpaces(bi, from, singsCM.getColorSpace());
+        final ColorModel srgbCM = ColorModel.getRGBdefault();
+        return convertBetweenColorSpaces(bi, from, srgbCM.getColorSpace());
     }
 
     public BufferedImage convertToColorSpace(final BufferedImage bi, final ColorSpace to) {
@@ -105,8 +110,8 @@ public class ColorTools {
     }
 
     public BufferedImage convertTosRgb(final BufferedImage bi) {
-        final ColorModel singCM = ColorModel.getRGBdefault();
-        return convertToColorSpace(bi, singCM.getColorSpace());
+        final ColorModel srgbCM = ColorModel.getRGBdefault();
+        return convertToColorSpace(bi, srgbCM.getColorSpace());
     }
 
     public BufferedImage correctImage(final BufferedImage src, final File file) throws ImagingException, IOException {
@@ -132,6 +137,7 @@ public class ColorTools {
     }
 
     public ColorModel deriveColorModel(final BufferedImage bi, final ColorSpace cs) throws ImagingOpException {
+        // boolean hasAlpha = (bi.getAlphaRaster() != null);
         return deriveColorModel(bi, cs, false);
     }
 
@@ -143,6 +149,7 @@ public class ColorTools {
 
         if (colorModel instanceof ComponentColorModel) {
             final ComponentColorModel ccm = (ComponentColorModel) colorModel;
+            // ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
             if (forceNoAlpha) {
                 return new ComponentColorModel(cs, false, false, Transparency.OPAQUE, ccm.getTransferType());
             }
@@ -158,11 +165,36 @@ public class ColorTools {
             return new DirectColorModel(cs, oldBits, dcm.getRedMask(), dcm.getGreenMask(), dcm.getBlueMask(), dcm.getAlphaMask(), dcm.isAlphaPremultiplied(),
                     dcm.getTransferType());
         }
+        // else if (old_cm instanceof PackedColorModel)
+        // {
+        // PackedColorModel pcm = (PackedColorModel) old_cm;
+        //
+        // // int old_mask = dcm.getRedMask() | dcm.getGreenMask()
+        // // | dcm.getBlueMask() | dcm.getAlphaMask();
+        //
+        // int[] old_masks = pcm.getMasks();
+        // // System.out.println("old_mask: " + old_mask);
+        // int old_bits = countBitsInMask(old_masks);
+        // // System.out.println("old_bits: " + old_bits);
+        //
+        // // PackedColorModel(ColorSpace space, int bits, int rmask, int gmask,
+        // int bmask, int amask, boolean isAlphaPremultiplied, int trans, int
+        // transferType)
+        // cm = new PackedColorModel(cs, old_bits, pcm.getMasks(),
+        //
+        // pcm.isAlphaPremultiplied(), pcm.getTransparency(), pcm
+        // .getTransferType());
+        // }
 
         throw new ImagingOpException("Could not clone unknown ColorModel Type.");
     }
 
     public BufferedImage relabelColorSpace(final BufferedImage bi, final ColorModel cm) throws ImagingOpException {
+        // This does not do the conversion. It tries to relabel the
+        // BufferedImage
+        // with its actual (presumably correct) Colorspace.
+        // use this when the image is mislabeled, presumably having been
+        // wrongly assumed to be sRGB
 
         return new BufferedImage(cm, bi.getRaster(), false, null);
     }

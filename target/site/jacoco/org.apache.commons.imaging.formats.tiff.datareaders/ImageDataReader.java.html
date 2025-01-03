@@ -1,0 +1,755 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageDataReader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Apache Commons Imaging</a> &gt; <a href="index.source.html" class="el_package">org.apache.commons.imaging.formats.tiff.datareaders</a> &gt; <span class="el_source">ImageDataReader.java</span></div><h1>ImageDataReader.java</h1><pre class="source lang-java linenums">/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the &quot;License&quot;); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.imaging.formats.tiff.datareaders;
+
+import java.awt.Rectangle;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteOrder;
+import java.util.Arrays;
+
+import org.apache.commons.imaging.ImagingException;
+import org.apache.commons.imaging.common.Allocator;
+import org.apache.commons.imaging.common.ImageBuilder;
+import org.apache.commons.imaging.common.PackBits;
+import org.apache.commons.imaging.common.ZlibDeflate;
+import org.apache.commons.imaging.formats.tiff.TiffDirectory;
+import org.apache.commons.imaging.formats.tiff.TiffField;
+import org.apache.commons.imaging.formats.tiff.TiffRasterData;
+import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
+import org.apache.commons.imaging.formats.tiff.constants.TiffPlanarConfiguration;
+import org.apache.commons.imaging.formats.tiff.constants.TiffTagConstants;
+import org.apache.commons.imaging.formats.tiff.itu_t4.T4AndT6Compression;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreter;
+import org.apache.commons.imaging.mylzw.MyLzwDecompressor;
+
+/**
+ * Defines the base class for the TIFF file reader classes. The TIFF format defines two broad organizations for image pixel storage: strips and tiles. This
+ * class defines common elements for both representations.
+ * &lt;p&gt;
+ * &lt;strong&gt;The TIFF Floating-Point Formats &lt;/strong&gt;
+ * &lt;p&gt;
+ * In addition to providing images, TIFF files can supply data in the form of numerical values. As of March 2020 the Commons Imaging library was extended to
+ * support some floating-point data formats.
+ * &lt;p&gt;
+ * Unfortunately, the TIFF floating-point format allows for a lot of different variations. At this time, only the most widely used of these are supported. When
+ * this code was written, only a small set of test data products were available. Thus it is likely that developers will wish to extend the range of
+ * floating-point data that can be processed as additional test data become available. When implementing extensions to this logic, developers are reminded that
+ * image processing requires the handling of literally millions of pixels, so attention to performance is essential to a successful implementation (please see
+ * the notes in {@link DataReaderStrips} for more information).
+ * &lt;p&gt;
+ * The TIFF floating-point specification is poorly documented. So these notes are included to provide clarification on at least some aspects of the format. Some
+ * documentation and C-code examples are available in &quot;TIFF Technical Note 3, April 8, 2005)&quot;.
+ * &lt;p&gt;
+ * &lt;strong&gt;The Predictor==3 Case&lt;/strong&gt;
+ * &lt;p&gt;
+ * TIFF specifies an extension for a predictor that is intended to improve data compression ratios for floating-point values. This predictor is specified using
+ * the TIFF predictor TAG with a value of 3 (see TIFF Technical Note 3). Consider a 4-byte floating point value given in IEEE-754 format. Let f3 be the
+ * high-order byte, with f2 the next highest, followed by f1, and f0 for the low-order byte. This designation should not be confused with the in-memory layout
+ * of the bytes (little-endian versus big-endian), but rather their numerical values. The sign bit and upper 7 bits of the exponent are given in the high-order
+ * byte, followed by the one remaining exponent bit and the mantissa in the lower-order bytes.
+ * &lt;p&gt;
+ * In many real-valued raster data sets, the sign and magnitude (exponent) of the values change slowly. But the bits in the mantissa vary rapidly in a
+ * semi-random manner. The information entropy in the mantissa tends to increase in the lowest ordered bytes. Thus, the high-order bytes have more redundancy
+ * than the low-order bytes and can compress more efficiently. To exploit this, the TIFF format splits the bytes into groups based on their order-of-magnitude.
+ * This splitting process takes place on a ROW-BY-ROW basis (note the emphasis, this point is not clearly documented in the spec). For example, for a row of
+ * length 3 pixels -- A, B, and C -- the data for two rows would be given as shown below (again, ignoring endian issues):
+ *
+ * &lt;pre&gt;
+ *   Original:
+ *      A3 A2 A1 A0   B3 B2 B1 B0   C3 C2 C1 C0
+ *      D3 D3 D1 D0   E3 E2 E2 E0   F3 F2 F1 F0
+ *
+ *   Bytes split into groups by order-of-magnitude:
+ *      A3 B3 C3   A2 B2 C2   A1 B1 C1   A0 B0 C0
+ *      D3 E3 F3   D2 E2 F2   D1 E1 F1   D0 E0 F0
+ * &lt;/pre&gt;
+ *
+ * To further improve the compression, the predictor takes the difference of each subsequent bytes. Again, the differences (deltas) are computed on a
+ * row-byte-row basis. For the most part, the differences combine bytes associated with the same order-of-magnitude, though there is a special transition at the
+ * end of each order-of-magnitude set (shown in parentheses):
+ *
+ * &lt;pre&gt;
+ *      A3, B3-A3, C3-B3, (A2-C3), B2-A2, C2-B2, (A1-C2), etc.
+ *      D3, E3-D3, F3-D3, (D2-F3), E3-D2, etc.
+ * &lt;/pre&gt;
+ *
+ * Once the predictor transform is complete, the data is stored using conventional data compression techniques such as Deflate or LZW. In practice, floating
+ * point data does not compress especially well, but using the above technique, the TIFF process typically reduces the overall storage size by 20 to 30 percent
+ * (depending on the data). The TIFF Technical Note 3 specifies 3 data size formats for storing floating point values:
+ *
+ * &lt;pre&gt;
+ *     32 bits    IEEE-754 single-precision standard
+ *     16 bits    IEEE-754 half-precision standard
+ *     24 bits    A non-standard representation
+ * &lt;/pre&gt;
+ *
+ * At this time, we have not obtained data samples for the smaller representations used in combination with a predictor.
+ * &lt;p&gt;
+ * &lt;strong&gt;Interleaved formats&lt;/strong&gt;
+ * &lt;p&gt;
+ * TIFF Technical Note 3 also provides example code for cases where each pixel (or raster cell) in the image is associated with more than one floating-point
+ * samples. Data in this format might be used for real-valued vector data, complex-valued pairs, or other numerical applications).
+ * &lt;p&gt;
+ * At this time, we have encountered only a limited selection of the possible configurations for multi-variable data. The code below only supports those
+ * configurations for which we had actual images that could be used to verify our implementation. The implementation supports the following formats:
+ * &lt;ul&gt;
+ * &lt;li&gt;32-bit floating-point data&lt;/li&gt;
+ * &lt;li&gt;Uncompressed, Deflate, or LZW compression&lt;/li&gt;
+ * &lt;li&gt;Optional horizontal predictors used with compression&lt;/li&gt;
+ * &lt;li&gt;PlanarConfiguration interleaved (CHUNKY) or non-interleaved (PLANAR)&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;p&gt;
+ * Note that integer formats are not supported at this time.
+ * &lt;p&gt;
+ * Often, the TIFF files store multi-variable data in so that samples are interleaved. For example, a configuration that gave two samples per pixel (or cell)
+ * would give the two values for the first pixel in order followed by the two values for the second pixel, etc. If a differencing approach were used for data
+ * compression, the byte-stream would begin with the high-order byte for each of the two samples for the first pixel, followed by the high-order byte for each
+ * of the next two samples, and so forth for the remainder of the row of pixels. It would then follow with the second-highest-order bytes for the first two
+ * samples, etc.
+ * &lt;p&gt;
+ * This implementation also supports the non-interleaved (PLANAR) configuration. One consideration in implementing this feature was that TIFF Technical Note 3
+ * does not address the case where a TIFF image uses the alternate planar configuration. For conventional images, the TIFF specification (Revision 6.0)
+ * recommends that the planar configuration should be avoided (see pg. 38). But for numerical data products, the planar configuration may yield better data
+ * compression in the case where different sample sets have different statistical properties. Because separated groups often have more uniformity and
+ * predictability than interleaved data sets, they sometimes lead to a small improvement in storage-size reduction when data compression is used.
+ */
+public abstract class ImageDataReader {
+
+    protected final TiffDirectory directory;
+    protected final PhotometricInterpreter photometricInterpreter;
+    private final int[] bitsPerSample;
+    protected final int bitsPerSampleLength;
+    private final int[] last;
+
+    protected final int predictor;
+    protected final int samplesPerPixel;
+    protected final int width;
+    protected final int height;
+    protected final int sampleFormat;
+
+    protected final TiffPlanarConfiguration planarConfiguration;
+
+    public ImageDataReader(final TiffDirectory directory, final PhotometricInterpreter photometricInterpreter, final int[] bitsPerSample, final int predictor,
+<span class="fc" id="L149">            final int samplesPerPixel, final int sampleFormat, final int width, final int height, final TiffPlanarConfiguration planarConfiguration) {</span>
+<span class="fc" id="L150">        this.directory = directory;</span>
+<span class="fc" id="L151">        this.photometricInterpreter = photometricInterpreter;</span>
+<span class="fc" id="L152">        this.bitsPerSample = bitsPerSample;</span>
+<span class="fc" id="L153">        this.bitsPerSampleLength = bitsPerSample.length;</span>
+<span class="fc" id="L154">        this.samplesPerPixel = samplesPerPixel;</span>
+<span class="fc" id="L155">        this.sampleFormat = sampleFormat;</span>
+<span class="fc" id="L156">        this.predictor = predictor;</span>
+<span class="fc" id="L157">        this.width = width;</span>
+<span class="fc" id="L158">        this.height = height;</span>
+<span class="fc" id="L159">        this.planarConfiguration = planarConfiguration;</span>
+<span class="fc" id="L160">        last = Allocator.intArray(samplesPerPixel);</span>
+
+<span class="fc" id="L162">    }</span>
+
+    protected int[] applyPredictor(final int[] samples) {
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (predictor == 2) {</span>
+            // Horizontal differencing.
+<span class="fc bfc" id="L167" title="All 2 branches covered.">            for (int i = 0; i &lt; samples.length; i++) {</span>
+<span class="fc" id="L168">                samples[i] = 0xff &amp; samples[i] + last[i];</span>
+<span class="fc" id="L169">                last[i] = samples[i];</span>
+            }
+        }
+
+<span class="fc" id="L173">        return samples;</span>
+    }
+
+    protected void applyPredictorToBlock(final int width, final int height, final int nSamplesPerPixel, final byte[] p) {
+<span class="fc" id="L177">        final int k = width * nSamplesPerPixel;</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        for (int i = 0; i &lt; height; i++) {</span>
+<span class="fc" id="L179">            final int j0 = i * k + nSamplesPerPixel;</span>
+<span class="fc" id="L180">            final int j1 = (i + 1) * k;</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            for (int j = j0; j &lt; j1; j++) {</span>
+<span class="fc" id="L182">                p[j] += p[j - nSamplesPerPixel];</span>
+            }
+        }
+<span class="fc" id="L185">    }</span>
+
+    protected byte[] decompress(final byte[] compressedInput, final int compression, final int expectedSize, final int tileWidth, final int tileHeight)
+            throws ImagingException, IOException {
+<span class="fc" id="L189">        final TiffField fillOrderField = directory.findField(TiffTagConstants.TIFF_TAG_FILL_ORDER);</span>
+<span class="fc" id="L190">        int fillOrder = TiffTagConstants.FILL_ORDER_VALUE_NORMAL;</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (fillOrderField != null) {</span>
+<span class="fc" id="L192">            fillOrder = fillOrderField.getIntValue();</span>
+        }
+        final byte[] compressedOrdered; // re-ordered bytes (if necessary)
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        if (fillOrder == TiffTagConstants.FILL_ORDER_VALUE_NORMAL) {</span>
+<span class="fc" id="L196">            compressedOrdered = compressedInput;</span>
+            // good
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        } else if (fillOrder == TiffTagConstants.FILL_ORDER_VALUE_REVERSED) {</span>
+<span class="nc" id="L199">            compressedOrdered = new byte[compressedInput.length];</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            for (int i = 0; i &lt; compressedInput.length; i++) {</span>
+<span class="nc" id="L201">                compressedOrdered[i] = (byte) (Integer.reverse(0xff &amp; compressedInput[i]) &gt;&gt;&gt; 24);</span>
+            }
+        } else {
+<span class="nc" id="L204">            throw new ImagingException(&quot;TIFF FillOrder=&quot; + fillOrder + &quot; is invalid&quot;);</span>
+        }
+
+<span class="pc bpc" id="L207" title="1 of 8 branches missed.">        switch (compression) {</span>
+        case TiffConstants.COMPRESSION_UNCOMPRESSED:
+            // None;
+<span class="fc" id="L210">            return compressedOrdered;</span>
+        case TiffConstants.COMPRESSION_CCITT_1D:
+            // CCITT Group 3 1-Dimensional Modified Huffman run-length encoding.
+<span class="fc" id="L213">            return T4AndT6Compression.decompressModifiedHuffman(compressedOrdered, tileWidth, tileHeight);</span>
+        case TiffConstants.COMPRESSION_CCITT_GROUP_3: {
+<span class="fc" id="L215">            int t4Options = 0;</span>
+<span class="fc" id="L216">            final TiffField field = directory.findField(TiffTagConstants.TIFF_TAG_T4_OPTIONS);</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">            if (field != null) {</span>
+<span class="fc" id="L218">                t4Options = field.getIntValue();</span>
+            }
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            final boolean is2D = (t4Options &amp; TiffConstants.FLAG_T4_OPTIONS_2D) != 0;</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            final boolean usesUncompressedMode = (t4Options &amp; TiffConstants.FLAG_T4_OPTIONS_UNCOMPRESSED_MODE) != 0;</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">            if (usesUncompressedMode) {</span>
+<span class="nc" id="L223">                throw new ImagingException(&quot;T.4 compression with the uncompressed mode extension is not yet supported&quot;);</span>
+            }
+<span class="fc bfc" id="L225" title="All 2 branches covered.">            final boolean hasFillBitsBeforeEOL = (t4Options &amp; TiffConstants.FLAG_T4_OPTIONS_FILL) != 0;</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            if (is2D) {</span>
+<span class="fc" id="L227">                return T4AndT6Compression.decompressT4_2D(compressedOrdered, tileWidth, tileHeight, hasFillBitsBeforeEOL);</span>
+            }
+<span class="fc" id="L229">            return T4AndT6Compression.decompressT4_1D(compressedOrdered, tileWidth, tileHeight, hasFillBitsBeforeEOL);</span>
+        }
+        case TiffConstants.COMPRESSION_CCITT_GROUP_4: {
+<span class="fc" id="L232">            int t6Options = 0;</span>
+<span class="fc" id="L233">            final TiffField field = directory.findField(TiffTagConstants.TIFF_TAG_T6_OPTIONS);</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">            if (field != null) {</span>
+<span class="nc" id="L235">                t6Options = field.getIntValue();</span>
+            }
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">            final boolean usesUncompressedMode = (t6Options &amp; TiffConstants.FLAG_T6_OPTIONS_UNCOMPRESSED_MODE) != 0;</span>
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">            if (usesUncompressedMode) {</span>
+<span class="nc" id="L239">                throw new ImagingException(&quot;T.6 compression with the uncompressed mode extension is not yet supported&quot;);</span>
+            }
+<span class="fc" id="L241">            return T4AndT6Compression.decompressT6(compressedOrdered, tileWidth, tileHeight);</span>
+        }
+        case TiffConstants.COMPRESSION_LZW: {
+<span class="fc" id="L244">            final InputStream is = new ByteArrayInputStream(compressedOrdered);</span>
+<span class="fc" id="L245">            final int lzwMinimumCodeSize = 8;</span>
+<span class="fc" id="L246">            return new MyLzwDecompressor(lzwMinimumCodeSize, ByteOrder.BIG_ENDIAN, true).decompress(is, expectedSize);</span>
+        }
+
+        // Packbits
+        case TiffConstants.COMPRESSION_PACKBITS: {
+<span class="fc" id="L251">            return PackBits.decompress(compressedOrdered, expectedSize);</span>
+        }
+
+        // deflate
+        case TiffConstants.COMPRESSION_DEFLATE_ADOBE:
+        case TiffConstants.COMPRESSION_DEFLATE_PKZIP: {
+<span class="fc" id="L257">            return ZlibDeflate.decompress(compressedInput, expectedSize);</span>
+        }
+
+        default:
+<span class="nc" id="L261">            throw new ImagingException(&quot;Tiff: unknown/unsupported compression: &quot; + compression);</span>
+        }
+    }
+
+    /**
+     * Reads samples and returns them in an int array.
+     *
+     * @param bis    the stream to read from
+     * @param result the samples array to populate, must be the same length as bitsPerSample.length
+     * @throws IOException
+     */
+    void getSamplesAsBytes(final BitInputStream bis, final int[] result) throws IOException {
+<span class="fc bfc" id="L273" title="All 2 branches covered.">        for (int i = 0; i &lt; bitsPerSample.length; i++) {</span>
+<span class="fc" id="L274">            final int bits = bitsPerSample[i];</span>
+<span class="fc" id="L275">            int sample = bis.readBits(bits);</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">            if (bits &lt; 8) {</span>
+<span class="fc" id="L277">                final int sign = sample &amp; 1;</span>
+<span class="fc" id="L278">                sample = sample &lt;&lt; 8 - bits; // scale to byte.</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">                if (sign &gt; 0) {</span>
+<span class="fc" id="L280">                    sample = sample | (1 &lt;&lt; 8 - bits) - 1; // extend to byte</span>
+                }
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">            } else if (bits &gt; 8) {</span>
+<span class="nc" id="L283">                sample = sample &gt;&gt; bits - 8; // extend to byte.</span>
+            }
+<span class="fc" id="L285">            result[i] = sample;</span>
+        }
+<span class="fc" id="L287">    }</span>
+
+    /**
+     * Checks if all the bits per sample entries are the same size
+     *
+     * @param size the size to check
+     * @return true if all the bits per sample entries are the same
+     */
+    protected boolean isHomogenous(final int size) {
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        for (final int element : bitsPerSample) {</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">            if (element != size) {</span>
+<span class="fc" id="L298">                return false;</span>
+            }
+        }
+<span class="fc" id="L301">        return true;</span>
+    }
+
+    /**
+     * Read the image data from the IFD associated with this instance of ImageDataReader using the optional sub-image specification if desired.
+     *
+     * @param subImageSpecification a rectangle describing a sub-region of the image for reading, or a null if the whole image is to be read.
+     * @param hasAlpha              indicates that the image has an alpha (transparency) channel (RGB color model only).
+     * @param isAlphaPremultiplied  indicates that the image uses the associated alpha channel format (pre-multiplied alpha).
+     * @return a valid instance containing the pixel data from the image.
+     * @throws IOException      in the event of an unrecoverable I/O error.
+     * @throws ImagingException TODO
+     */
+    public abstract ImageBuilder readImageData(Rectangle subImageSpecification, boolean hasAlpha, boolean isAlphaPremultiplied)
+            throws IOException, ImagingException;
+
+    /**
+     * Defines a method for accessing the floating-point raster data in a TIFF image. These implementations of this method in DataReaderStrips and
+     * DataReaderTiled assume that this instance is of a compatible data type (floating-point) and that all access checks have already been performed.
+     *
+     * @param subImage if non-null, instructs the access method to retrieve only a sub-section of the image data.
+     * @return a valid instance
+     * @throws ImagingException in the event of an incompatible data form.
+     * @throws IOException      in the event of I/O error.
+     */
+    public abstract TiffRasterData readRasterData(Rectangle subImage) throws ImagingException, IOException;
+
+    protected void resetPredictor() {
+<span class="fc" id="L329">        Arrays.fill(last, 0);</span>
+<span class="fc" id="L330">    }</span>
+
+    /**
+     * Transfer samples obtained from the TIFF file to a floating-point raster.
+     *
+     * @param xBlock       coordinate of block relative to source data
+     * @param yBlock       coordinate of block relative to source data
+     * @param blockWidth   width of block, in pixels
+     * @param blockHeight  height of block in pixels
+     * @param blockData    the data for the block
+     * @param xRaster      coordinate of raster relative to source data
+     * @param yRaster      coordinate of raster relative to source data
+     * @param rasterWidth  width of the raster (always smaller than source data)
+     * @param rasterHeight height of the raster (always smaller than source data)
+     * @param rasterData   the raster data.
+     */
+    void transferBlockToRaster(final int xBlock, final int yBlock, final int blockWidth, final int blockHeight, final int[] blockData, final int xRaster,
+            final int yRaster, final int rasterWidth, final int rasterHeight, final int samplesPerPixel, final float[] rasterData) {
+
+        // xR0, yR0 are the coordinates within the raster (upper-left corner)
+        // xR1, yR1 are ONE PAST the coordinates of the lower-right corner
+<span class="fc" id="L351">        int xR0 = xBlock - xRaster; // xR0, yR0 coordinates relative to</span>
+<span class="fc" id="L352">        int yR0 = yBlock - yRaster; // the raster</span>
+<span class="fc" id="L353">        int xR1 = xR0 + blockWidth;</span>
+<span class="fc" id="L354">        int yR1 = yR0 + blockHeight;</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">        if (xR0 &lt; 0) {</span>
+<span class="fc" id="L356">            xR0 = 0;</span>
+        }
+<span class="fc bfc" id="L358" title="All 2 branches covered.">        if (yR0 &lt; 0) {</span>
+<span class="fc" id="L359">            yR0 = 0;</span>
+        }
+<span class="fc bfc" id="L361" title="All 2 branches covered.">        if (xR1 &gt; rasterWidth) {</span>
+<span class="fc" id="L362">            xR1 = rasterWidth;</span>
+        }
+<span class="fc bfc" id="L364" title="All 2 branches covered.">        if (yR1 &gt; rasterHeight) {</span>
+<span class="fc" id="L365">            yR1 = rasterHeight;</span>
+        }
+
+        // Recall that the above logic may have adjusted xR0, xY0 so that
+        // they are not necessarily point to the source pixel at xRaster, yRaster
+        // we compute xSource = xR0+xRaster.
+        // xOffset = xSource-xBlock
+        // since the block cannot be accessed with a negative offset,
+        // we check for negatives and adjust xR0, yR0 upward as necessary
+<span class="fc" id="L374">        int xB0 = xR0 + xRaster - xBlock;</span>
+<span class="fc" id="L375">        int yB0 = yR0 + yRaster - yBlock;</span>
+<span class="pc bpc" id="L376" title="1 of 2 branches missed.">        if (xB0 &lt; 0) {</span>
+<span class="nc" id="L377">            xR0 -= xB0;</span>
+<span class="nc" id="L378">            xB0 = 0;</span>
+        }
+<span class="pc bpc" id="L380" title="1 of 2 branches missed.">        if (yB0 &lt; 0) {</span>
+<span class="nc" id="L381">            yR0 -= yB0;</span>
+<span class="nc" id="L382">            yB0 = 0;</span>
+        }
+
+<span class="fc" id="L385">        int w = xR1 - xR0;</span>
+<span class="fc" id="L386">        int h = yR1 - yR0;</span>
+<span class="pc bpc" id="L387" title="2 of 4 branches missed.">        if (w &lt;= 0 || h &lt;= 0) {</span>
+            // The call to this method put the block outside the
+            // bounds of the raster. There is nothing to do. Ideally,
+            // this situation never arises, because it would mean that
+            // the data was read from the file unnecessarily.
+<span class="nc" id="L392">            return;</span>
+        }
+        // see if the xR1, yR1 would extend past the limits of the block
+<span class="pc bpc" id="L395" title="1 of 2 branches missed.">        if (w &gt; blockWidth) {</span>
+<span class="nc" id="L396">            w = blockWidth;</span>
+        }
+<span class="pc bpc" id="L398" title="1 of 2 branches missed.">        if (h &gt; blockHeight) {</span>
+<span class="nc" id="L399">            h = blockHeight;</span>
+        }
+
+        // The TiffRasterData class expects data to be in the order
+        // corresponding to TiffPlanarConfiguration.PLANAR. So for the
+        // multivariable case, we must convert CHUNKY data to PLANAR.
+<span class="fc bfc" id="L405" title="All 2 branches covered.">        if (samplesPerPixel == 1) {</span>
+<span class="fc bfc" id="L406" title="All 2 branches covered.">            for (int i = 0; i &lt; h; i++) {</span>
+<span class="fc" id="L407">                final int yR = yR0 + i;</span>
+<span class="fc" id="L408">                final int yB = yB0 + i;</span>
+<span class="fc" id="L409">                final int rOffset = yR * rasterWidth + xR0;</span>
+<span class="fc" id="L410">                final int bOffset = yB * blockWidth + xB0;</span>
+<span class="fc bfc" id="L411" title="All 2 branches covered.">                for (int j = 0; j &lt; w; j++) {</span>
+<span class="fc" id="L412">                    rasterData[rOffset + j] = Float.intBitsToFloat(blockData[bOffset + j]);</span>
+                }
+            }
+<span class="fc bfc" id="L415" title="All 2 branches covered.">        } else if (this.planarConfiguration == TiffPlanarConfiguration.CHUNKY) {</span>
+            // The source data is in the interleaved (Chunky) order,
+            // but the TiffRasterData class expects non-interleaved order.
+            // So we transcribe the elements as appropriate.
+<span class="fc" id="L419">            final int pixelsPerPlane = rasterWidth * rasterHeight;</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">            for (int i = 0; i &lt; h; i++) {</span>
+<span class="fc" id="L421">                final int yR = yR0 + i;</span>
+<span class="fc" id="L422">                final int yB = yB0 + i;</span>
+<span class="fc" id="L423">                final int rOffset = yR * rasterWidth + xR0;</span>
+<span class="fc" id="L424">                final int bOffset = yB * blockWidth + xB0;</span>
+<span class="fc bfc" id="L425" title="All 2 branches covered.">                for (int j = 0; j &lt; w; j++) {</span>
+<span class="fc bfc" id="L426" title="All 2 branches covered.">                    for (int k = 0; k &lt; samplesPerPixel; k++) {</span>
+<span class="fc" id="L427">                        rasterData[k * pixelsPerPlane + rOffset + j] = Float.intBitsToFloat(blockData[(bOffset + j) * samplesPerPixel + k]);</span>
+                    }
+                }
+            }
+<span class="fc" id="L431">        } else {</span>
+<span class="fc bfc" id="L432" title="All 2 branches covered.">            for (int iPlane = 0; iPlane &lt; samplesPerPixel; iPlane++) {</span>
+<span class="fc" id="L433">                final int rPlanarOffset = iPlane * rasterWidth * rasterHeight;</span>
+<span class="fc" id="L434">                final int bPlanarOffset = iPlane * blockWidth * blockHeight;</span>
+<span class="fc bfc" id="L435" title="All 2 branches covered.">                for (int i = 0; i &lt; h; i++) {</span>
+<span class="fc" id="L436">                    final int yR = yR0 + i;</span>
+<span class="fc" id="L437">                    final int yB = yB0 + i;</span>
+<span class="fc" id="L438">                    final int rOffset = rPlanarOffset + yR * rasterWidth + xR0;</span>
+<span class="fc" id="L439">                    final int bOffset = bPlanarOffset + yB * blockWidth + xB0;</span>
+<span class="fc bfc" id="L440" title="All 2 branches covered.">                    for (int j = 0; j &lt; w; j++) {</span>
+<span class="fc" id="L441">                        rasterData[rOffset + j] = Float.intBitsToFloat(blockData[bOffset + j]);</span>
+                    }
+                }
+            }
+        }
+
+<span class="fc" id="L447">    }</span>
+
+    /**
+     * Transfer samples obtained from the TIFF file to an integer raster.
+     *
+     * @param xBlock       coordinate of block relative to source data
+     * @param yBlock       coordinate of block relative to source data
+     * @param blockWidth   width of block, in pixels
+     * @param blockHeight  height of block in pixels
+     * @param blockData    the data for the block
+     * @param xRaster      coordinate of raster relative to source data
+     * @param yRaster      coordinate of raster relative to source data
+     * @param rasterWidth  width of the raster (always smaller than source data)
+     * @param rasterHeight height of the raster (always smaller than source data)
+     * @param rasterData   the raster data.
+     */
+    void transferBlockToRaster(final int xBlock, final int yBlock, final int blockWidth, final int blockHeight, final int[] blockData, final int xRaster,
+            final int yRaster, final int rasterWidth, final int rasterHeight, final int[] rasterData) {
+
+        // xR0, yR0 are the coordinates within the raster (upper-left corner)
+        // xR1, yR1 are ONE PAST the coordinates of the lower-right corner
+<span class="fc" id="L468">        int xR0 = xBlock - xRaster; // xR0, yR0 coordinates relative to</span>
+<span class="fc" id="L469">        int yR0 = yBlock - yRaster; // the raster</span>
+<span class="fc" id="L470">        int xR1 = xR0 + blockWidth;</span>
+<span class="fc" id="L471">        int yR1 = yR0 + blockHeight;</span>
+<span class="fc bfc" id="L472" title="All 2 branches covered.">        if (xR0 &lt; 0) {</span>
+<span class="fc" id="L473">            xR0 = 0;</span>
+        }
+<span class="fc bfc" id="L475" title="All 2 branches covered.">        if (yR0 &lt; 0) {</span>
+<span class="fc" id="L476">            yR0 = 0;</span>
+        }
+<span class="fc bfc" id="L478" title="All 2 branches covered.">        if (xR1 &gt; rasterWidth) {</span>
+<span class="fc" id="L479">            xR1 = rasterWidth;</span>
+        }
+<span class="fc bfc" id="L481" title="All 2 branches covered.">        if (yR1 &gt; rasterHeight) {</span>
+<span class="fc" id="L482">            yR1 = rasterHeight;</span>
+        }
+
+        // Recall that the above logic may have adjusted xR0, xY0 so that
+        // they are not necessarily point to the source pixel at xRaster, yRaster
+        // we compute xSource = xR0+xRaster.
+        // xOffset = xSource-xBlock
+        // since the block cannot be accessed with a negative offset,
+        // we check for negatives and adjust xR0, yR0 upward as necessary
+<span class="fc" id="L491">        int xB0 = xR0 + xRaster - xBlock;</span>
+<span class="fc" id="L492">        int yB0 = yR0 + yRaster - yBlock;</span>
+<span class="pc bpc" id="L493" title="1 of 2 branches missed.">        if (xB0 &lt; 0) {</span>
+<span class="nc" id="L494">            xR0 -= xB0;</span>
+<span class="nc" id="L495">            xB0 = 0;</span>
+        }
+<span class="pc bpc" id="L497" title="1 of 2 branches missed.">        if (yB0 &lt; 0) {</span>
+<span class="nc" id="L498">            yR0 -= yB0;</span>
+<span class="nc" id="L499">            yB0 = 0;</span>
+        }
+
+<span class="fc" id="L502">        int w = xR1 - xR0;</span>
+<span class="fc" id="L503">        int h = yR1 - yR0;</span>
+<span class="pc bpc" id="L504" title="2 of 4 branches missed.">        if (w &lt;= 0 || h &lt;= 0) {</span>
+            // The call to this method puts the block outside the
+            // bounds of the raster. There is nothing to do. Ideally,
+            // this situation never arises, because it would mean that
+            // the data was read from the file unnecessarily.
+<span class="nc" id="L509">            return;</span>
+        }
+        // see if the xR1, yR1 would extend past the limits of the block
+<span class="pc bpc" id="L512" title="1 of 2 branches missed.">        if (w &gt; blockWidth) {</span>
+<span class="nc" id="L513">            w = blockWidth;</span>
+        }
+<span class="pc bpc" id="L515" title="1 of 2 branches missed.">        if (h &gt; blockHeight) {</span>
+<span class="nc" id="L516">            h = blockHeight;</span>
+        }
+
+<span class="fc bfc" id="L519" title="All 2 branches covered.">        for (int i = 0; i &lt; h; i++) {</span>
+<span class="fc" id="L520">            final int yR = yR0 + i;</span>
+<span class="fc" id="L521">            final int yB = yB0 + i;</span>
+<span class="fc" id="L522">            final int rOffset = yR * rasterWidth + xR0;</span>
+<span class="fc" id="L523">            final int bOffset = yB * blockWidth + xB0;</span>
+<span class="fc" id="L524">            System.arraycopy(blockData, bOffset, rasterData, rOffset, w);</span>
+        }
+<span class="fc" id="L526">    }</span>
+
+    /**
+     * Given a source file that specifies the floating-point data format, unpack the raw bytes obtained from the source file and organize them into an array of
+     * integers containing the bit-equivalent of IEEE-754 32-bit floats. Source files containing 64 bit doubles are downcast to floats.
+     * &lt;p&gt;
+     * This method supports either the tile format or the strip format of TIFF source files. The scan size indicates the number of columns to be extracted. For
+     * strips, the width and the scan size are always the full width of the image. For tiles, the scan size is the full width of the tile, but the width may be
+     * smaller in the cases where the tiles do not evenly divide the width (for example, a 256 pixel wide tile in a 257 pixel wide image would result in two
+     * columns of tiles, the second column having only one column of pixels that were worth extracting.
+     *
+     * @param width        the width of the data block to be extracted
+     * @param height       the height of the data block to be extracted
+     * @param scanSize     the number of pixels in a single row of the block
+     * @param bytes        the raw bytes
+     * @param bitsPerPixel the number of bits per sample, 32 or 64.
+     * @param byteOrder    the byte order for the source data
+     * @return a valid array of integers in row major order, dimensions scan-size wide and height.
+     * @throws ImagingException in the event of an invalid format.
+     */
+    protected int[] unpackFloatingPointSamples(final int width, final int height, final int scanSize, final byte[] bytes, final int bitsPerPixel,
+            final ByteOrder byteOrder) throws ImagingException {
+<span class="fc" id="L548">        final int bitsPerSample = bitsPerPixel / samplesPerPixel;</span>
+<span class="fc" id="L549">        final int bytesPerSample = bitsPerSample / 8;</span>
+<span class="fc" id="L550">        final int bytesPerScan = scanSize * samplesPerPixel * bytesPerSample;</span>
+<span class="fc" id="L551">        final int nBytes = bytesPerScan * height;</span>
+<span class="pc bpc" id="L552" title="1 of 2 branches missed.">        final int length = bytes.length &lt; nBytes ? nBytes / bytesPerScan : height;</span>
+<span class="fc" id="L553">        final int[] samples = Allocator.intArray(scanSize * samplesPerPixel * height);</span>
+        // floating-point differencing is indicated by a predictor value of 3.
+<span class="fc bfc" id="L555" title="All 2 branches covered.">        if (predictor == TiffTagConstants.PREDICTOR_VALUE_FLOATING_POINT_DIFFERENCING) {</span>
+            // at this time, this class supports the 32-bit format. The
+            // main reason for this is that we have not located sample data
+            // that can be used for testing and analysis.
+<span class="pc bpc" id="L559" title="1 of 2 branches missed.">            if (bitsPerPixel / samplesPerPixel != 32) {</span>
+<span class="nc" id="L560">                throw new ImagingException(</span>
+                        &quot;Imaging does not yet support floating-point data&quot; + &quot; with predictor type 3 for &quot; + bitsPerPixel + &quot; bits per sample&quot;);
+            }
+
+<span class="fc bfc" id="L564" title="All 2 branches covered.">            if (planarConfiguration == TiffPlanarConfiguration.CHUNKY) {</span>
+<span class="fc" id="L565">                final int bytesInRow = scanSize * 4 * samplesPerPixel;</span>
+<span class="fc bfc" id="L566" title="All 2 branches covered.">                for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L567">                    final int aOffset = i * bytesInRow;</span>
+<span class="fc" id="L568">                    final int bOffset = aOffset + scanSize * samplesPerPixel;</span>
+<span class="fc" id="L569">                    final int cOffset = bOffset + scanSize * samplesPerPixel;</span>
+<span class="fc" id="L570">                    final int dOffset = cOffset + scanSize * samplesPerPixel;</span>
+                    // in this loop, the source bytes give delta values.
+                    // we adjust them to give true values. This operation is
+                    // done on a row-by-row basis.
+<span class="fc bfc" id="L574" title="All 2 branches covered.">                    for (int j = 1; j &lt; bytesInRow; j++) {</span>
+<span class="fc" id="L575">                        bytes[aOffset + j] += bytes[aOffset + j - 1];</span>
+                    }
+                    // pack the bytes into the integer bit-equivalent of
+                    // floating point values
+<span class="fc" id="L579">                    int index = i * scanSize;</span>
+<span class="fc bfc" id="L580" title="All 2 branches covered.">                    for (int j = 0; j &lt; width * samplesPerPixel; j++) {</span>
+<span class="fc" id="L581">                        final int a = bytes[aOffset + j];</span>
+<span class="fc" id="L582">                        final int b = bytes[bOffset + j];</span>
+<span class="fc" id="L583">                        final int c = bytes[cOffset + j];</span>
+<span class="fc" id="L584">                        final int d = bytes[dOffset + j];</span>
+                        // Pack the 4 byte components into a single integer
+                        // in the byte order used by the TIFF standard
+<span class="fc" id="L587">                        samples[index++] = (a &amp; 0xff) &lt;&lt; 24 | (b &amp; 0xff) &lt;&lt; 16 | (c &amp; 0xff) &lt;&lt; 8 | d &amp; 0xff;</span>
+                    }
+                }
+<span class="fc" id="L590">            } else {</span>
+<span class="fc" id="L591">                final int bytesInRow = scanSize * 4;</span>
+<span class="fc bfc" id="L592" title="All 2 branches covered.">                for (int iPlane = 0; iPlane &lt; samplesPerPixel; iPlane++) {</span>
+<span class="fc" id="L593">                    final int planarIntOffset = iPlane * length * scanSize;</span>
+<span class="fc" id="L594">                    final int planarByteOffset = planarIntOffset * 4;</span>
+
+<span class="fc bfc" id="L596" title="All 2 branches covered.">                    for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L597">                        final int aOffset = i * bytesInRow + planarByteOffset;</span>
+<span class="fc" id="L598">                        final int bOffset = aOffset + scanSize;</span>
+<span class="fc" id="L599">                        final int cOffset = bOffset + scanSize;</span>
+<span class="fc" id="L600">                        final int dOffset = cOffset + scanSize;</span>
+                        // in this loop, the source bytes give delta values.
+                        // we adjust them to give true values. This operation is
+                        // done on a row-by-row basis.
+<span class="fc bfc" id="L604" title="All 2 branches covered.">                        for (int j = 1; j &lt; bytesInRow; j++) {</span>
+<span class="fc" id="L605">                            bytes[aOffset + j] += bytes[aOffset + j - 1];</span>
+                        }
+                        // pack the bytes into the integer bit-equivalent of
+                        // floating point values
+<span class="fc" id="L609">                        int index = planarIntOffset + i * scanSize;</span>
+<span class="fc bfc" id="L610" title="All 2 branches covered.">                        for (int j = 0; j &lt; width; j++) {</span>
+<span class="fc" id="L611">                            final int a = bytes[aOffset + j];</span>
+<span class="fc" id="L612">                            final int b = bytes[bOffset + j];</span>
+<span class="fc" id="L613">                            final int c = bytes[cOffset + j];</span>
+<span class="fc" id="L614">                            final int d = bytes[dOffset + j];</span>
+                            // Pack the 4 byte components into a single integer
+                            // in the byte order used by the TIFF standard
+<span class="fc" id="L617">                            samples[index++] = (a &amp; 0xff) &lt;&lt; 24 | (b &amp; 0xff) &lt;&lt; 16 | (c &amp; 0xff) &lt;&lt; 8 | d &amp; 0xff;</span>
+                        }
+                    }
+                }
+
+            }
+<span class="fc" id="L623">            return samples;</span>
+        } // end of predictor==3 case.
+
+        // simple packing case, 64 or 32 bits --------------------------
+<span class="fc bfc" id="L627" title="All 2 branches covered.">        if (bitsPerSample == 64) {</span>
+<span class="fc" id="L628">            int k = 0;</span>
+<span class="fc" id="L629">            int index = 0;</span>
+<span class="fc bfc" id="L630" title="All 2 branches covered.">            for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc bfc" id="L631" title="All 2 branches covered.">                for (int j = 0; j &lt; scanSize; j++) {</span>
+<span class="fc" id="L632">                    final long b0 = bytes[k++] &amp; 0xffL;</span>
+<span class="fc" id="L633">                    final long b1 = bytes[k++] &amp; 0xffL;</span>
+<span class="fc" id="L634">                    final long b2 = bytes[k++] &amp; 0xffL;</span>
+<span class="fc" id="L635">                    final long b3 = bytes[k++] &amp; 0xffL;</span>
+<span class="fc" id="L636">                    final long b4 = bytes[k++] &amp; 0xffL;</span>
+<span class="fc" id="L637">                    final long b5 = bytes[k++] &amp; 0xffL;</span>
+<span class="fc" id="L638">                    final long b6 = bytes[k++] &amp; 0xffL;</span>
+<span class="fc" id="L639">                    final long b7 = bytes[k++] &amp; 0xffL;</span>
+                    long sbits;
+<span class="fc bfc" id="L641" title="All 2 branches covered.">                    if (byteOrder == ByteOrder.LITTLE_ENDIAN) {</span>
+<span class="fc" id="L642">                        sbits = b7 &lt;&lt; 56 | b6 &lt;&lt; 48 | b5 &lt;&lt; 40 | b4 &lt;&lt; 32 | b3 &lt;&lt; 24 | b2 &lt;&lt; 16 | b1 &lt;&lt; 8 | b0;</span>
+
+                    } else {
+<span class="fc" id="L645">                        sbits = b0 &lt;&lt; 56 | b1 &lt;&lt; 48 | b2 &lt;&lt; 40 | b3 &lt;&lt; 32 | b4 &lt;&lt; 24 | b5 &lt;&lt; 16 | b6 &lt;&lt; 8 | b7;</span>
+                    }
+                    // since the photometric interpreter does not
+                    // currently support doubles, we need to replace this
+                    // element with a float. This action is inefficient and
+                    // should be improved.
+<span class="fc" id="L651">                    final float f = (float) Double.longBitsToDouble(sbits);</span>
+<span class="fc" id="L652">                    samples[index++] = Float.floatToRawIntBits(f);</span>
+                }
+            }
+<span class="pc bpc" id="L655" title="1 of 2 branches missed.">        } else if (bitsPerSample == 32) {</span>
+<span class="fc" id="L656">            int k = 0;</span>
+<span class="fc" id="L657">            int index = 0;</span>
+<span class="fc bfc" id="L658" title="All 2 branches covered.">            for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc bfc" id="L659" title="All 2 branches covered.">                for (int j = 0; j &lt; scanSize * samplesPerPixel; j++) {</span>
+<span class="fc" id="L660">                    final int b0 = bytes[k++] &amp; 0xff;</span>
+<span class="fc" id="L661">                    final int b1 = bytes[k++] &amp; 0xff;</span>
+<span class="fc" id="L662">                    final int b2 = bytes[k++] &amp; 0xff;</span>
+<span class="fc" id="L663">                    final int b3 = bytes[k++] &amp; 0xff;</span>
+                    int sbits;
+<span class="fc bfc" id="L665" title="All 2 branches covered.">                    if (byteOrder == ByteOrder.LITTLE_ENDIAN) {</span>
+<span class="fc" id="L666">                        sbits = b3 &lt;&lt; 24 | b2 &lt;&lt; 16 | b1 &lt;&lt; 8 | b0;</span>
+
+                    } else {
+<span class="fc" id="L669">                        sbits = b0 &lt;&lt; 24 | b1 &lt;&lt; 16 | b2 &lt;&lt; 8 | b3;</span>
+                    }
+                    // since the photometric interpreter does not
+                    // currently support doubles, we need to replace this
+                    // element with a float. This action is inefficient and
+                    // should be improved.
+<span class="fc" id="L675">                    samples[index++] = sbits;</span>
+                }
+            }
+<span class="fc" id="L678">        } else {</span>
+<span class="nc" id="L679">            throw new ImagingException(&quot;Imaging does not support floating-point samples with &quot; + bitsPerPixel + &quot; bits per sample&quot;);</span>
+        }
+
+<span class="fc" id="L682">        return samples;</span>
+    }
+
+    /**
+     * Given a source file that specifies numerical data as short integers, unpack the raw bytes obtained from the source file and organize them into an array
+     * of integers.
+     * &lt;p&gt;
+     * This method supports either the tile format or the strip format of TIFF source files. The scan size indicates the number of columns to be extracted. For
+     * strips, the width and the scan size are always the full width of the image. For tiles, the scan size is the full width of the tile, but the &quot;width&quot;
+     * parameter may be smaller in the cases where the tiles do not evenly divide the width (for example, a 256 pixel wide tile in a 257 pixel wide image would
+     * result in two columns of tiles, the second column having only one column of pixels that were worth extracting.
+     *
+     * @param width         the width of the data block to be extracted
+     * @param height        the height of the data block to be extracted
+     * @param scanSize      the number of pixels in a single row of the block
+     * @param bytes         the raw bytes
+     * @param predictor     the predictor specified by the source, only predictor 3 is supported.
+     * @param bitsPerSample the number of bits per sample, 32 or 64.
+     * @param byteOrder     the byte order for the source data
+     * @return a valid array of integers in row major order, dimensions scan-size wide and height.
+     */
+    protected int[] unpackIntSamples(final int width, final int height, final int scanSize, final byte[] bytes, final int predictor, final int bitsPerSample,
+            final ByteOrder byteOrder) {
+<span class="fc" id="L705">        final int bytesPerSample = bitsPerSample / 8;</span>
+<span class="fc" id="L706">        final int nBytes = bytesPerSample * scanSize * height;</span>
+<span class="pc bpc" id="L707" title="1 of 2 branches missed.">        final int length = bytes.length &lt; nBytes ? nBytes / scanSize : height;</span>
+
+<span class="fc" id="L709">        final int[] samples = Allocator.intArray(scanSize * height);</span>
+        // At this time, Commons Imaging only supports two-byte
+        // two's complement short integers. It is assumed that
+        // the calling module already checked the arguments for
+        // compliance, so this method simply assumes that they are correct.
+
+        // The logic that follows is simplified by the fact that
+        // the existing API only supports two-byte signed integers.
+<span class="pc bpc" id="L717" title="1 of 2 branches missed.">        final boolean useDifferencing = predictor == TiffTagConstants.PREDICTOR_VALUE_HORIZONTAL_DIFFERENCING;</span>
+
+<span class="fc bfc" id="L719" title="All 2 branches covered.">        for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L720">            final int index = i * scanSize;</span>
+<span class="fc" id="L721">            int offset = index * bytesPerSample;</span>
+<span class="fc bfc" id="L722" title="All 2 branches covered.">            if (bitsPerSample == 16) {</span>
+<span class="fc bfc" id="L723" title="All 2 branches covered.">                if (byteOrder == ByteOrder.LITTLE_ENDIAN) {</span>
+<span class="fc bfc" id="L724" title="All 2 branches covered.">                    for (int j = 0; j &lt; width; j++, offset += 2) {</span>
+<span class="fc" id="L725">                        samples[index + j] = bytes[offset + 1] &lt;&lt; 8 | bytes[offset] &amp; 0xff;</span>
+                    }
+                } else {
+<span class="fc bfc" id="L728" title="All 2 branches covered.">                    for (int j = 0; j &lt; width; j++, offset += 2) {</span>
+<span class="fc" id="L729">                        samples[index + j] = bytes[offset] &lt;&lt; 8 | bytes[offset + 1] &amp; 0xff;</span>
+                    }
+                }
+<span class="pc bpc" id="L732" title="1 of 2 branches missed.">            } else if (bitsPerSample == 32) {</span>
+<span class="fc bfc" id="L733" title="All 2 branches covered.">                if (byteOrder == ByteOrder.LITTLE_ENDIAN) {</span>
+<span class="fc bfc" id="L734" title="All 2 branches covered.">                    for (int j = 0; j &lt; width; j++, offset += 4) {</span>
+<span class="fc" id="L735">                        samples[index + j] = bytes[offset + 3] &lt;&lt; 24 | (bytes[offset + 2] &amp; 0xff) &lt;&lt; 16 | (bytes[offset + 1] &amp; 0xff) &lt;&lt; 8</span>
+                                | bytes[offset] &amp; 0xff;
+                    }
+                } else {
+<span class="fc bfc" id="L739" title="All 2 branches covered.">                    for (int j = 0; j &lt; width; j++, offset += 4) {</span>
+<span class="fc" id="L740">                        samples[index + j] = bytes[offset] &lt;&lt; 24 | (bytes[offset + 1] &amp; 0xff) &lt;&lt; 16 | (bytes[offset + 2] &amp; 0xff) &lt;&lt; 8</span>
+                                | bytes[offset + 3] &amp; 0xff;
+                    }
+                }
+            }
+<span class="pc bpc" id="L745" title="1 of 2 branches missed.">            if (useDifferencing) {</span>
+<span class="nc bnc" id="L746" title="All 2 branches missed.">                for (int j = 1; j &lt; width; j++) {</span>
+<span class="nc" id="L747">                    samples[index + j] += samples[index + j - 1];</span>
+                }
+            }
+        }
+
+<span class="fc" id="L752">        return samples;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

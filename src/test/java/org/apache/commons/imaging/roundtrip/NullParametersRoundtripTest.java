@@ -47,7 +47,7 @@ public class NullParametersRoundtripTest extends RoundtripBase {
         Imaging.getImageInfo(new ByteArrayInputStream(temp1), fileName);
         Imaging.getImageSize(new ByteArrayInputStream(temp1), fileName);
         Imaging.getMetadata(new ByteArrayInputStream(temp1), fileName);
-        //Imaging.getIccProfile(new ByteArrayInputStream(temp1), fileName);
+        Imaging.getIccProfile(new ByteArrayInputStream(temp1), fileName);
         final BufferedImage imageRead = Imaging.getBufferedImage(new ByteArrayInputStream(temp1), fileName);
 
         assertNotNull(imageRead);

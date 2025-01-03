@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TiffImageParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Apache Commons Imaging</a> &gt; <a href="index.source.html" class="el_package">org.apache.commons.imaging.formats.tiff</a> &gt; <span class="el_source">TiffImageParser.java</span></div><h1>TiffImageParser.java</h1><pre class="source lang-java linenums">/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the &quot;License&quot;); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.imaging.formats.tiff;
+
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.imaging.AbstractImageParser;
+import org.apache.commons.imaging.FormatCompliance;
+import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.ImagingException;
+import org.apache.commons.imaging.bytesource.ByteSource;
+import org.apache.commons.imaging.common.Allocator;
+import org.apache.commons.imaging.common.ImageBuilder;
+import org.apache.commons.imaging.common.ImageMetadata;
+import org.apache.commons.imaging.common.XmpEmbeddable;
+import org.apache.commons.imaging.common.XmpImagingParameters;
+import org.apache.commons.imaging.formats.tiff.TiffDirectory.ImageDataElement;
+import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
+import org.apache.commons.imaging.formats.tiff.constants.TiffEpTagConstants;
+import org.apache.commons.imaging.formats.tiff.constants.TiffPlanarConfiguration;
+import org.apache.commons.imaging.formats.tiff.constants.TiffTagConstants;
+import org.apache.commons.imaging.formats.tiff.datareaders.ImageDataReader;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreter;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreterBiLevel;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreterCieLab;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreterCmyk;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreterLogLuv;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreterPalette;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreterRgb;
+import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreterYCbCr;
+import org.apache.commons.imaging.formats.tiff.write.TiffImageWriterLossy;
+
+/**
+ * Implements methods for reading and writing TIFF files. Instances of this class are invoked from the general Imaging class. Applications that require the use
+ * of TIFF-specific features may instantiate and access this class directly.
+ */
+<span class="fc" id="L62">public class TiffImageParser extends AbstractImageParser&lt;TiffImagingParameters&gt; implements XmpEmbeddable&lt;TiffImagingParameters&gt; {</span>
+
+<span class="fc" id="L64">    private static final String DEFAULT_EXTENSION = ImageFormats.TIFF.getDefaultExtension();</span>
+<span class="fc" id="L65">    private static final String[] ACCEPTED_EXTENSIONS = ImageFormats.TIFF.getExtensions();</span>
+
+    private Rectangle checkForSubImage(final TiffImagingParameters params) {
+        // the params class enforces a correct specification for the
+        // sub-image, but does not have knowledge of the actual
+        // dimensions of the image that is being read. This method
+        // returns the sub-image specification, if any, and leaves
+        // further tests to the calling module.
+<span class="fc bfc" id="L73" title="All 4 branches covered.">        if (params != null &amp;&amp; params.isSubImageSet()) {</span>
+<span class="fc" id="L74">            final int ix0 = params.getSubImageX();</span>
+<span class="fc" id="L75">            final int iy0 = params.getSubImageY();</span>
+<span class="fc" id="L76">            final int iwidth = params.getSubImageWidth();</span>
+<span class="fc" id="L77">            final int iheight = params.getSubImageHeight();</span>
+<span class="fc" id="L78">            return new Rectangle(ix0, iy0, iwidth, iheight);</span>
+        }
+<span class="fc" id="L80">        return null;</span>
+    }
+
+    public List&lt;byte[]&gt; collectRawImageData(final ByteSource byteSource, final TiffImagingParameters params) throws ImagingException, IOException {
+<span class="nc" id="L84">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="nc bnc" id="L85" title="All 4 branches missed.">        final TiffContents contents = new TiffReader(params != null &amp;&amp; params.isStrict()).readDirectories(byteSource, true, formatCompliance);</span>
+
+<span class="nc" id="L87">        final List&lt;byte[]&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        for (int i = 0; i &lt; contents.directories.size(); i++) {</span>
+<span class="nc" id="L89">            final TiffDirectory directory = contents.directories.get(i);</span>
+<span class="nc" id="L90">            final List&lt;ImageDataElement&gt; dataElements = directory.getTiffRawImageDataElements();</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">            for (final ImageDataElement element : dataElements) {</span>
+<span class="nc" id="L92">                final byte[] bytes = byteSource.getByteArray(element.offset, element.length);</span>
+<span class="nc" id="L93">                result.add(bytes);</span>
+<span class="nc" id="L94">            }</span>
+        }
+<span class="nc" id="L96">        return result;</span>
+    }
+
+    @Override
+    public boolean dumpImageFile(final PrintWriter pw, final ByteSource byteSource) throws ImagingException, IOException {
+        try {
+<span class="nc" id="L102">            pw.println(&quot;tiff.dumpImageFile&quot;);</span>
+
+            {
+<span class="nc" id="L105">                final ImageInfo imageData = getImageInfo(byteSource);</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                if (imageData == null) {</span>
+<span class="nc" id="L107">                    return false;</span>
+                }
+
+<span class="nc" id="L110">                imageData.toString(pw, &quot;&quot;);</span>
+            }
+
+<span class="nc" id="L113">            pw.println(&quot;&quot;);</span>
+
+            // try
+            {
+<span class="nc" id="L117">                final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="nc" id="L118">                final TiffImagingParameters params = new TiffImagingParameters();</span>
+<span class="nc" id="L119">                final TiffContents contents = new TiffReader(true).readContents(byteSource, params, formatCompliance);</span>
+
+<span class="nc" id="L121">                final List&lt;TiffDirectory&gt; directories = contents.directories;</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                if (directories == null) {</span>
+<span class="nc" id="L123">                    return false;</span>
+                }
+
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                for (int d = 0; d &lt; directories.size(); d++) {</span>
+<span class="nc" id="L127">                    final TiffDirectory directory = directories.get(d);</span>
+
+                    // Debug.debug(&quot;directory offset&quot;, directory.offset);
+
+<span class="nc bnc" id="L131" title="All 2 branches missed.">                    for (final TiffField field : directory) {</span>
+<span class="nc" id="L132">                        field.dump(pw, Integer.toString(d));</span>
+<span class="nc" id="L133">                    }</span>
+                }
+
+<span class="nc" id="L136">                pw.println(&quot;&quot;);</span>
+            }
+            // catch (Exception e)
+            // {
+            // Debug.debug(e);
+            // pw.println(&quot;&quot;);
+            // return false;
+            // }
+
+<span class="nc" id="L145">            return true;</span>
+        } finally {
+<span class="nc" id="L147">            pw.println(&quot;&quot;);</span>
+        }
+    }
+
+    @Override
+    protected String[] getAcceptedExtensions() {
+<span class="fc" id="L153">        return ACCEPTED_EXTENSIONS;</span>
+    }
+
+    @Override
+    protected ImageFormat[] getAcceptedTypes() {
+<span class="fc" id="L158">        return new ImageFormat[] { ImageFormats.TIFF, //</span>
+        };
+    }
+
+    @Override
+    public List&lt;BufferedImage&gt; getAllBufferedImages(final ByteSource byteSource) throws ImagingException, IOException {
+<span class="fc" id="L164">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="fc" id="L165">        final TiffReader tiffReader = new TiffReader(true);</span>
+<span class="fc" id="L166">        final TiffContents contents = tiffReader.readDirectories(byteSource, true, formatCompliance);</span>
+<span class="fc" id="L167">        final List&lt;BufferedImage&gt; results = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        for (int i = 0; i &lt; contents.directories.size(); i++) {</span>
+<span class="fc" id="L169">            final TiffDirectory directory = contents.directories.get(i);</span>
+<span class="fc" id="L170">            final BufferedImage result = directory.getTiffImage(tiffReader.getByteOrder(), null);</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">            if (result != null) {</span>
+<span class="fc" id="L172">                results.add(result);</span>
+            }
+        }
+<span class="fc" id="L175">        return results;</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * Gets a buffered image specified by the byte source. The TiffImageParser class features support for a number of options that are unique to the TIFF
+     * format. These options can be specified by supplying the appropriate parameters using the keys from the TiffConstants class and the params argument for
+     * this method.
+     * &lt;/p&gt;
+     *
+     * &lt;p&gt;
+     * &lt;strong&gt;Loading Partial Images&lt;/strong&gt;
+     * &lt;/p&gt;
+     *
+     * &lt;p&gt;
+     * The TIFF parser includes support for loading partial images without committing significantly more memory resources than are necessary to store the image.
+     * This feature is useful for conserving memory in applications that require a relatively small sub image from a very large TIFF file. The specifications
+     * for partial images are as follows:
+     * &lt;/p&gt;
+     *
+     * &lt;pre&gt;
+     * TiffImagingParameters params = new TiffImagingParameters();
+     * params.setSubImageX(x);
+     * params.setSubImageY(y);
+     * params.setSubImageWidth(width);
+     * params.setSubImageHeight(height);
+     * &lt;/pre&gt;
+     *
+     * &lt;p&gt;
+     * Note that the arguments x, y, width, and height must specify a valid rectangular region that is fully contained within the source TIFF image.
+     * &lt;/p&gt;
+     *
+     * @param byteSource A valid instance of ByteSource
+     * @param params     Optional instructions for special-handling or interpretation of the input data (null objects are permitted and must be supported by
+     *                   implementations).
+     * @return A valid instance of BufferedImage.
+     * @throws ImagingException In the event that the specified content does not conform to the format of the specific parser implementation.
+     * @throws IOException      In the event of unsuccessful read or access operation.
+     */
+    @Override
+    public BufferedImage getBufferedImage(final ByteSource byteSource, TiffImagingParameters params) throws ImagingException, IOException {
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        if (params == null) {</span>
+<span class="fc" id="L217">            params = new TiffImagingParameters();</span>
+        }
+<span class="fc" id="L219">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="fc" id="L220">        final TiffReader reader = new TiffReader(params.isStrict());</span>
+<span class="fc" id="L221">        final TiffContents contents = reader.readFirstDirectory(byteSource, true, formatCompliance);</span>
+<span class="fc" id="L222">        final ByteOrder byteOrder = reader.getByteOrder();</span>
+<span class="fc" id="L223">        final TiffDirectory directory = contents.directories.get(0);</span>
+<span class="fc" id="L224">        final BufferedImage result = directory.getTiffImage(byteOrder, params);</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">        if (null == result) {</span>
+<span class="nc" id="L226">            throw new ImagingException(&quot;TIFF does not contain an image.&quot;);</span>
+        }
+<span class="fc" id="L228">        return result;</span>
+    }
+
+    protected BufferedImage getBufferedImage(final TiffDirectory directory, final ByteOrder byteOrder, final TiffImagingParameters params)
+            throws ImagingException, IOException {
+        final short compressionFieldValue;
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        if (directory.findField(TiffTagConstants.TIFF_TAG_COMPRESSION) != null) {</span>
+<span class="fc" id="L235">            compressionFieldValue = directory.getFieldValue(TiffTagConstants.TIFF_TAG_COMPRESSION);</span>
+        } else {
+<span class="fc" id="L237">            compressionFieldValue = TiffConstants.COMPRESSION_UNCOMPRESSED_1;</span>
+        }
+<span class="fc" id="L239">        final int compression = 0xffff &amp; compressionFieldValue;</span>
+<span class="fc" id="L240">        final int width = directory.getSingleFieldValue(TiffTagConstants.TIFF_TAG_IMAGE_WIDTH);</span>
+<span class="fc" id="L241">        final int height = directory.getSingleFieldValue(TiffTagConstants.TIFF_TAG_IMAGE_LENGTH);</span>
+
+<span class="fc" id="L243">        final Rectangle subImage = checkForSubImage(params);</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        if (subImage != null) {</span>
+            // Check for valid subimage specification. The following checks
+            // are consistent with BufferedImage.getSubimage()
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">            if (subImage.width &lt;= 0) {</span>
+<span class="nc" id="L248">                throw new ImagingException(&quot;Negative or zero subimage width.&quot;);</span>
+            }
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">            if (subImage.height &lt;= 0) {</span>
+<span class="nc" id="L251">                throw new ImagingException(&quot;Negative or zero subimage height.&quot;);</span>
+            }
+<span class="pc bpc" id="L253" title="2 of 4 branches missed.">            if (subImage.x &lt; 0 || subImage.x &gt;= width) {</span>
+<span class="nc" id="L254">                throw new ImagingException(&quot;Subimage x is outside raster.&quot;);</span>
+            }
+<span class="fc bfc" id="L256" title="All 2 branches covered.">            if (subImage.x + subImage.width &gt; width) {</span>
+<span class="fc" id="L257">                throw new ImagingException(&quot;Subimage (x+width) is outside raster.&quot;);</span>
+            }
+<span class="pc bpc" id="L259" title="2 of 4 branches missed.">            if (subImage.y &lt; 0 || subImage.y &gt;= height) {</span>
+<span class="nc" id="L260">                throw new ImagingException(&quot;Subimage y is outside raster.&quot;);</span>
+            }
+<span class="fc bfc" id="L262" title="All 2 branches covered.">            if (subImage.y + subImage.height &gt; height) {</span>
+<span class="fc" id="L263">                throw new ImagingException(&quot;Subimage (y+height) is outside raster.&quot;);</span>
+            }
+        }
+
+<span class="fc" id="L267">        int samplesPerPixel = 1;</span>
+<span class="fc" id="L268">        final TiffField samplesPerPixelField = directory.findField(TiffTagConstants.TIFF_TAG_SAMPLES_PER_PIXEL);</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        if (samplesPerPixelField != null) {</span>
+<span class="fc" id="L270">            samplesPerPixel = samplesPerPixelField.getIntValue();</span>
+        }
+<span class="fc" id="L272">        int[] bitsPerSample = { 1 };</span>
+<span class="fc" id="L273">        int bitsPerPixel = samplesPerPixel;</span>
+<span class="fc" id="L274">        final TiffField bitsPerSampleField = directory.findField(TiffTagConstants.TIFF_TAG_BITS_PER_SAMPLE);</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">        if (bitsPerSampleField != null) {</span>
+<span class="fc" id="L276">            bitsPerSample = bitsPerSampleField.getIntArrayValue();</span>
+<span class="fc" id="L277">            bitsPerPixel = bitsPerSampleField.getIntValueOrArraySum();</span>
+        }
+
+        // int bitsPerPixel = getTagAsValueOrArraySum(entries,
+        // TIFF_TAG_BITS_PER_SAMPLE);
+
+<span class="fc" id="L283">        int predictor = -1;</span>
+        {
+            // dumpOptionalNumberTag(entries, TIFF_TAG_FILL_ORDER);
+            // dumpOptionalNumberTag(entries, TIFF_TAG_FREE_BYTE_COUNTS);
+            // dumpOptionalNumberTag(entries, TIFF_TAG_FREE_OFFSETS);
+            // dumpOptionalNumberTag(entries, TIFF_TAG_ORIENTATION);
+            // dumpOptionalNumberTag(entries, TIFF_TAG_PLANAR_CONFIGURATION);
+<span class="fc" id="L290">            final TiffField predictorField = directory.findField(TiffTagConstants.TIFF_TAG_PREDICTOR);</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">            if (null != predictorField) {</span>
+<span class="fc" id="L292">                predictor = predictorField.getIntValueOrArraySum();</span>
+            }
+        }
+
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">        if (samplesPerPixel != bitsPerSample.length) {</span>
+<span class="nc" id="L297">            throw new ImagingException(&quot;Tiff: samplesPerPixel (&quot; + samplesPerPixel + &quot;)!=fBitsPerSample.length (&quot; + bitsPerSample.length + &quot;)&quot;);</span>
+        }
+
+<span class="fc" id="L300">        final int photometricInterpretation = 0xffff &amp; directory.getFieldValue(TiffTagConstants.TIFF_TAG_PHOTOMETRIC_INTERPRETATION);</span>
+
+<span class="fc" id="L302">        boolean hasAlpha = false;</span>
+<span class="fc" id="L303">        boolean isAlphaPremultiplied = false;</span>
+<span class="fc bfc" id="L304" title="All 4 branches covered.">        if (photometricInterpretation == TiffTagConstants.PHOTOMETRIC_INTERPRETATION_VALUE_RGB &amp;&amp; samplesPerPixel == 4) {</span>
+<span class="fc" id="L305">            final TiffField extraSamplesField = directory.findField(TiffTagConstants.TIFF_TAG_EXTRA_SAMPLES);</span>
+<span class="pc bpc" id="L306" title="1 of 2 branches missed.">            if (extraSamplesField == null) {</span>
+                // this state is not defined in the TIFF specification
+                // and so this code will interpret it as meaning that the
+                // proper handling would be ARGB.
+<span class="nc" id="L310">                hasAlpha = true;</span>
+<span class="nc" id="L311">                isAlphaPremultiplied = false;</span>
+            } else {
+<span class="fc" id="L313">                final int extraSamplesValue = extraSamplesField.getIntValue();</span>
+<span class="fc bfc" id="L314" title="All 3 branches covered.">                switch (extraSamplesValue) {</span>
+                case TiffTagConstants.EXTRA_SAMPLE_UNASSOCIATED_ALPHA:
+<span class="fc" id="L316">                    hasAlpha = true;</span>
+<span class="fc" id="L317">                    isAlphaPremultiplied = false;</span>
+<span class="fc" id="L318">                    break;</span>
+                case TiffTagConstants.EXTRA_SAMPLE_ASSOCIATED_ALPHA:
+<span class="fc" id="L320">                    hasAlpha = true;</span>
+<span class="fc" id="L321">                    isAlphaPremultiplied = true;</span>
+<span class="fc" id="L322">                    break;</span>
+                case 0:
+                default:
+<span class="fc" id="L325">                    hasAlpha = false;</span>
+<span class="fc" id="L326">                    isAlphaPremultiplied = false;</span>
+                    break;
+                }
+            }
+        }
+
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        PhotometricInterpreter photometricInterpreter = params == null ? null : params.getCustomPhotometricInterpreter();</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">        if (photometricInterpreter == null) {</span>
+<span class="fc" id="L334">            photometricInterpreter = getPhotometricInterpreter(directory, photometricInterpretation, bitsPerPixel, bitsPerSample, predictor, samplesPerPixel,</span>
+                    width, height);
+        }
+
+        // Obtain the planar configuration
+<span class="fc" id="L339">        final TiffField pcField = directory.findField(TiffTagConstants.TIFF_TAG_PLANAR_CONFIGURATION);</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">        final TiffPlanarConfiguration planarConfiguration = pcField == null ? TiffPlanarConfiguration.CHUNKY</span>
+<span class="fc" id="L341">                : TiffPlanarConfiguration.lenientValueOf(pcField.getIntValue());</span>
+
+<span class="fc bfc" id="L343" title="All 2 branches covered.">        if (planarConfiguration == TiffPlanarConfiguration.PLANAR) {</span>
+            // currently, we support the non-interleaved (non-chunky)
+            // option only in the case of a 24-bit RBG photometric interpreter
+            // and for strips (not for tiles).
+<span class="pc bpc" id="L347" title="2 of 4 branches missed.">            if (photometricInterpretation != TiffTagConstants.PHOTOMETRIC_INTERPRETATION_VALUE_RGB || bitsPerPixel != 24) {</span>
+<span class="nc" id="L348">                throw new ImagingException(&quot;For planar configuration 2, only 24 bit RGB is currently supported&quot;);</span>
+            }
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">            if (null == directory.findField(TiffTagConstants.TIFF_TAG_STRIP_OFFSETS)) {</span>
+<span class="nc" id="L351">                throw new ImagingException(&quot;For planar configuration 2, only strips-organization is supported&quot;);</span>
+            }
+        }
+
+<span class="fc" id="L355">        final AbstractTiffImageData imageData = directory.getTiffImageData();</span>
+
+<span class="fc" id="L357">        final ImageDataReader dataReader = imageData.getDataReader(directory, photometricInterpreter, bitsPerPixel, bitsPerSample, predictor, samplesPerPixel,</span>
+                width, height, compression, planarConfiguration, byteOrder);
+
+<span class="fc" id="L360">        final ImageBuilder iBuilder = dataReader.readImageData(subImage, hasAlpha, isAlphaPremultiplied);</span>
+<span class="fc" id="L361">        return iBuilder.getBufferedImage();</span>
+    }
+
+    @Override
+    public String getDefaultExtension() {
+<span class="nc" id="L366">        return DEFAULT_EXTENSION;</span>
+    }
+
+    @Override
+    public TiffImagingParameters getDefaultParameters() {
+<span class="fc" id="L371">        return new TiffImagingParameters();</span>
+    }
+
+    @Override
+    public FormatCompliance getFormatCompliance(final ByteSource byteSource) throws ImagingException, IOException {
+<span class="nc" id="L376">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="nc" id="L377">        final TiffImagingParameters params = new TiffImagingParameters();</span>
+<span class="nc" id="L378">        new TiffReader(params.isStrict()).readContents(byteSource, params, formatCompliance);</span>
+<span class="nc" id="L379">        return formatCompliance;</span>
+    }
+
+    @Override
+    public byte[] getIccProfileBytes(final ByteSource byteSource, final TiffImagingParameters params) throws ImagingException, IOException {
+<span class="fc" id="L384">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="pc bpc" id="L385" title="3 of 4 branches missed.">        final TiffContents contents = new TiffReader(params != null &amp;&amp; params.isStrict()).readFirstDirectory(byteSource, false, formatCompliance);</span>
+<span class="fc" id="L386">        final TiffDirectory directory = contents.directories.get(0);</span>
+
+<span class="fc" id="L388">        return directory.getFieldValue(TiffEpTagConstants.EXIF_TAG_INTER_COLOR_PROFILE, false);</span>
+    }
+
+    @Override
+    public ImageInfo getImageInfo(final ByteSource byteSource, final TiffImagingParameters params) throws ImagingException, IOException {
+<span class="fc" id="L393">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="pc bpc" id="L394" title="1 of 4 branches missed.">        final TiffContents contents = new TiffReader(params != null &amp;&amp; params.isStrict()).readDirectories(byteSource, false, formatCompliance);</span>
+<span class="fc" id="L395">        final TiffDirectory directory = contents.directories.get(0);</span>
+
+<span class="fc" id="L397">        final TiffField widthField = directory.findField(TiffTagConstants.TIFF_TAG_IMAGE_WIDTH, true);</span>
+<span class="fc" id="L398">        final TiffField heightField = directory.findField(TiffTagConstants.TIFF_TAG_IMAGE_LENGTH, true);</span>
+
+<span class="pc bpc" id="L400" title="2 of 4 branches missed.">        if (widthField == null || heightField == null) {</span>
+<span class="nc" id="L401">            throw new ImagingException(&quot;TIFF image missing size info.&quot;);</span>
+        }
+
+<span class="fc" id="L404">        final int height = heightField.getIntValue();</span>
+<span class="fc" id="L405">        final int width = widthField.getIntValue();</span>
+
+<span class="fc" id="L407">        final TiffField resolutionUnitField = directory.findField(TiffTagConstants.TIFF_TAG_RESOLUTION_UNIT);</span>
+<span class="fc" id="L408">        int resolutionUnit = 2; // Inch</span>
+<span class="pc bpc" id="L409" title="1 of 4 branches missed.">        if (resolutionUnitField != null &amp;&amp; resolutionUnitField.getValue() != null) {</span>
+<span class="fc" id="L410">            resolutionUnit = resolutionUnitField.getIntValue();</span>
+        }
+
+<span class="fc" id="L413">        double unitsPerInch = -1;</span>
+<span class="pc bpc" id="L414" title="2 of 4 branches missed.">        switch (resolutionUnit) {</span>
+        case 1:
+<span class="fc" id="L416">            break;</span>
+        case 2: // Inch
+<span class="fc" id="L418">            unitsPerInch = 1.0;</span>
+<span class="fc" id="L419">            break;</span>
+        case 3: // Centimeter
+<span class="nc" id="L421">            unitsPerInch = 2.54;</span>
+<span class="nc" id="L422">            break;</span>
+        default:
+            break;
+
+        }
+
+<span class="fc" id="L428">        int physicalWidthDpi = -1;</span>
+<span class="fc" id="L429">        float physicalWidthInch = -1;</span>
+<span class="fc" id="L430">        int physicalHeightDpi = -1;</span>
+<span class="fc" id="L431">        float physicalHeightInch = -1;</span>
+
+<span class="fc bfc" id="L433" title="All 2 branches covered.">        if (unitsPerInch &gt; 0) {</span>
+<span class="fc" id="L434">            final TiffField xResolutionField = directory.findField(TiffTagConstants.TIFF_TAG_XRESOLUTION);</span>
+<span class="fc" id="L435">            final TiffField yResolutionField = directory.findField(TiffTagConstants.TIFF_TAG_YRESOLUTION);</span>
+
+<span class="pc bpc" id="L437" title="1 of 4 branches missed.">            if (xResolutionField != null &amp;&amp; xResolutionField.getValue() != null) {</span>
+<span class="fc" id="L438">                final double xResolutionPixelsPerUnit = xResolutionField.getDoubleValue();</span>
+<span class="fc" id="L439">                physicalWidthDpi = (int) Math.round(xResolutionPixelsPerUnit * unitsPerInch);</span>
+<span class="fc" id="L440">                physicalWidthInch = (float) (width / (xResolutionPixelsPerUnit * unitsPerInch));</span>
+            }
+<span class="pc bpc" id="L442" title="1 of 4 branches missed.">            if (yResolutionField != null &amp;&amp; yResolutionField.getValue() != null) {</span>
+<span class="fc" id="L443">                final double yResolutionPixelsPerUnit = yResolutionField.getDoubleValue();</span>
+<span class="fc" id="L444">                physicalHeightDpi = (int) Math.round(yResolutionPixelsPerUnit * unitsPerInch);</span>
+<span class="fc" id="L445">                physicalHeightInch = (float) (height / (yResolutionPixelsPerUnit * unitsPerInch));</span>
+            }
+        }
+
+<span class="fc" id="L449">        final TiffField bitsPerSampleField = directory.findField(TiffTagConstants.TIFF_TAG_BITS_PER_SAMPLE);</span>
+
+<span class="fc" id="L451">        int bitsPerSample = 1;</span>
+<span class="pc bpc" id="L452" title="1 of 4 branches missed.">        if (bitsPerSampleField != null &amp;&amp; bitsPerSampleField.getValue() != null) {</span>
+<span class="fc" id="L453">            bitsPerSample = bitsPerSampleField.getIntValueOrArraySum();</span>
+        }
+
+<span class="fc" id="L456">        final int bitsPerPixel = bitsPerSample; // assume grayscale;</span>
+        // dunno if this handles colormapped images correctly.
+
+<span class="fc" id="L459">        final List&lt;String&gt; comments = Allocator.arrayList(directory.size());</span>
+<span class="fc bfc" id="L460" title="All 2 branches covered.">        for (final TiffField field : directory) {</span>
+<span class="fc" id="L461">            final String comment = field.toString();</span>
+<span class="fc" id="L462">            comments.add(comment);</span>
+<span class="fc" id="L463">        }</span>
+
+<span class="fc" id="L465">        final ImageFormat format = ImageFormats.TIFF;</span>
+<span class="fc" id="L466">        final String formatName = &quot;TIFF Tag-based Image File Format&quot;;</span>
+<span class="fc" id="L467">        final String mimeType = &quot;image/tiff&quot;;</span>
+<span class="fc" id="L468">        final int numberOfImages = contents.directories.size();</span>
+        // not accurate ... only reflects first
+<span class="fc" id="L470">        final boolean progressive = false;</span>
+        // is TIFF ever interlaced/progressive?
+
+<span class="fc" id="L473">        final String formatDetails = &quot;TIFF v.&quot; + contents.header.tiffVersion;</span>
+
+<span class="fc" id="L475">        boolean transparent = false; // TODO: wrong</span>
+<span class="fc" id="L476">        boolean usesPalette = false;</span>
+<span class="fc" id="L477">        final TiffField colorMapField = directory.findField(TiffTagConstants.TIFF_TAG_COLOR_MAP);</span>
+<span class="fc bfc" id="L478" title="All 2 branches covered.">        if (colorMapField != null) {</span>
+<span class="fc" id="L479">            usesPalette = true;</span>
+        }
+
+<span class="fc" id="L482">        final int photoInterp = 0xffff &amp; directory.getFieldValue(TiffTagConstants.TIFF_TAG_PHOTOMETRIC_INTERPRETATION);</span>
+<span class="fc" id="L483">        final TiffField extraSamplesField = directory.findField(TiffTagConstants.TIFF_TAG_EXTRA_SAMPLES);</span>
+        final int extraSamples;
+<span class="fc bfc" id="L485" title="All 2 branches covered.">        if (extraSamplesField == null) {</span>
+<span class="fc" id="L486">            extraSamples = 0; // no extra samples value</span>
+        } else {
+<span class="fc" id="L488">            extraSamples = extraSamplesField.getIntValue();</span>
+        }
+<span class="fc" id="L490">        final TiffField samplesPerPixelField = directory.findField(TiffTagConstants.TIFF_TAG_SAMPLES_PER_PIXEL);</span>
+        final int samplesPerPixel;
+<span class="fc bfc" id="L492" title="All 2 branches covered.">        if (samplesPerPixelField == null) {</span>
+<span class="fc" id="L493">            samplesPerPixel = 1;</span>
+        } else {
+<span class="fc" id="L495">            samplesPerPixel = samplesPerPixelField.getIntValue();</span>
+        }
+
+        final ImageInfo.ColorType colorType;
+<span class="pc bpc" id="L499" title="1 of 6 branches missed.">        switch (photoInterp) {</span>
+        case TiffTagConstants.PHOTOMETRIC_INTERPRETATION_VALUE_BLACK_IS_ZERO:
+        case TiffTagConstants.PHOTOMETRIC_INTERPRETATION_VALUE_WHITE_IS_ZERO:
+            // the ImageInfo.ColorType enumeration does not distinguish
+            // between monotone white is zero or black is zero
+<span class="fc" id="L504">            colorType = ImageInfo.ColorType.BW;</span>
+<span class="fc" id="L505">            break;</span>
+        case TiffTagConstants.PHOTOMETRIC_INTERPRETATION_VALUE_RGB:
+<span class="fc" id="L507">            colorType = ImageInfo.ColorType.RGB;</span>
+            // even if 4 samples per pixel are included, TIFF
+            // doesn't specify transparent unless the optional &quot;extra samples&quot;
+            // field is supplied with a non-zero value
+<span class="pc bpc" id="L511" title="1 of 4 branches missed.">            transparent = samplesPerPixel == 4 &amp;&amp; extraSamples != 0;</span>
+<span class="fc" id="L512">            break;</span>
+        case TiffTagConstants.PHOTOMETRIC_INTERPRETATION_VALUE_RGB_PALETTE:
+<span class="fc" id="L514">            colorType = ImageInfo.ColorType.RGB;</span>
+<span class="fc" id="L515">            usesPalette = true;</span>
+<span class="fc" id="L516">            break;</span>
+        case TiffTagConstants.PHOTOMETRIC_INTERPRETATION_VALUE_CMYK:
+<span class="fc" id="L518">            colorType = ImageInfo.ColorType.CMYK;</span>
+<span class="fc" id="L519">            break;</span>
+        case TiffTagConstants.PHOTOMETRIC_INTERPRETATION_VALUE_YCB_CR:
+<span class="fc" id="L521">            colorType = ImageInfo.ColorType.YCbCr;</span>
+<span class="fc" id="L522">            break;</span>
+        default:
+<span class="nc" id="L524">            colorType = ImageInfo.ColorType.UNKNOWN;</span>
+        }
+
+        final short compressionFieldValue;
+<span class="fc bfc" id="L528" title="All 2 branches covered.">        if (directory.findField(TiffTagConstants.TIFF_TAG_COMPRESSION) != null) {</span>
+<span class="fc" id="L529">            compressionFieldValue = directory.getFieldValue(TiffTagConstants.TIFF_TAG_COMPRESSION);</span>
+        } else {
+<span class="fc" id="L531">            compressionFieldValue = TiffConstants.COMPRESSION_UNCOMPRESSED_1;</span>
+        }
+<span class="fc" id="L533">        final int compression = 0xffff &amp; compressionFieldValue;</span>
+        ImageInfo.CompressionAlgorithm compressionAlgorithm;
+
+<span class="pc bpc" id="L536" title="3 of 11 branches missed.">        switch (compression) {</span>
+        case TiffConstants.COMPRESSION_UNCOMPRESSED_1:
+<span class="fc" id="L538">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.NONE;</span>
+<span class="fc" id="L539">            break;</span>
+        case TiffConstants.COMPRESSION_CCITT_1D:
+<span class="fc" id="L541">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.CCITT_1D;</span>
+<span class="fc" id="L542">            break;</span>
+        case TiffConstants.COMPRESSION_CCITT_GROUP_3:
+<span class="fc" id="L544">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.CCITT_GROUP_3;</span>
+<span class="fc" id="L545">            break;</span>
+        case TiffConstants.COMPRESSION_CCITT_GROUP_4:
+<span class="fc" id="L547">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.CCITT_GROUP_4;</span>
+<span class="fc" id="L548">            break;</span>
+        case TiffConstants.COMPRESSION_LZW:
+<span class="fc" id="L550">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.LZW;</span>
+<span class="fc" id="L551">            break;</span>
+        case TiffConstants.COMPRESSION_JPEG_OBSOLETE:
+<span class="nc" id="L553">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.JPEG_TIFF_OBSOLETE;</span>
+<span class="nc" id="L554">            break;</span>
+        case TiffConstants.COMPRESSION_JPEG:
+<span class="fc" id="L556">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.JPEG;</span>
+<span class="fc" id="L557">            break;</span>
+        case TiffConstants.COMPRESSION_UNCOMPRESSED_2:
+<span class="nc" id="L559">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.NONE;</span>
+<span class="nc" id="L560">            break;</span>
+        case TiffConstants.COMPRESSION_PACKBITS:
+<span class="fc" id="L562">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.PACKBITS;</span>
+<span class="fc" id="L563">            break;</span>
+        case TiffConstants.COMPRESSION_DEFLATE_PKZIP:
+        case TiffConstants.COMPRESSION_DEFLATE_ADOBE:
+<span class="fc" id="L566">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.DEFLATE;</span>
+<span class="fc" id="L567">            break;</span>
+        default:
+<span class="nc" id="L569">            compressionAlgorithm = ImageInfo.CompressionAlgorithm.UNKNOWN;</span>
+            break;
+        }
+
+<span class="fc" id="L573">        return new ImageInfo(formatDetails, bitsPerPixel, comments, format, formatName, height, mimeType, numberOfImages, physicalHeightDpi, physicalHeightInch,</span>
+                physicalWidthDpi, physicalWidthInch, width, progressive, transparent, usesPalette, colorType, compressionAlgorithm);
+    }
+
+    @Override
+    public Dimension getImageSize(final ByteSource byteSource, final TiffImagingParameters params) throws ImagingException, IOException {
+<span class="fc" id="L579">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="pc bpc" id="L580" title="3 of 4 branches missed.">        final TiffContents contents = new TiffReader(params != null &amp;&amp; params.isStrict()).readFirstDirectory(byteSource, false, formatCompliance);</span>
+<span class="fc" id="L581">        final TiffDirectory directory = contents.directories.get(0);</span>
+
+<span class="fc" id="L583">        final TiffField widthField = directory.findField(TiffTagConstants.TIFF_TAG_IMAGE_WIDTH, true);</span>
+<span class="fc" id="L584">        final TiffField heightField = directory.findField(TiffTagConstants.TIFF_TAG_IMAGE_LENGTH, true);</span>
+
+<span class="pc bpc" id="L586" title="2 of 4 branches missed.">        if (widthField == null || heightField == null) {</span>
+<span class="nc" id="L587">            throw new ImagingException(&quot;TIFF image missing size info.&quot;);</span>
+        }
+
+<span class="fc" id="L590">        final int height = heightField.getIntValue();</span>
+<span class="fc" id="L591">        final int width = widthField.getIntValue();</span>
+
+<span class="fc" id="L593">        return new Dimension(width, height);</span>
+    }
+
+    @Override
+    public ImageMetadata getMetadata(final ByteSource byteSource, TiffImagingParameters params) throws ImagingException, IOException {
+<span class="fc bfc" id="L598" title="All 2 branches covered.">        if (params == null) {</span>
+<span class="fc" id="L599">            params = getDefaultParameters();</span>
+        }
+<span class="fc" id="L601">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="fc" id="L602">        final TiffReader tiffReader = new TiffReader(params.isStrict());</span>
+<span class="fc" id="L603">        final TiffContents contents = tiffReader.readContents(byteSource, params, formatCompliance);</span>
+
+<span class="fc" id="L605">        final List&lt;TiffDirectory&gt; directories = contents.directories;</span>
+
+<span class="fc" id="L607">        final TiffImageMetadata result = new TiffImageMetadata(contents);</span>
+
+<span class="fc bfc" id="L609" title="All 2 branches covered.">        for (final TiffDirectory dir : directories) {</span>
+<span class="fc" id="L610">            final TiffImageMetadata.Directory metadataDirectory = new TiffImageMetadata.Directory(tiffReader.getByteOrder(), dir);</span>
+
+<span class="fc" id="L612">            final List&lt;TiffField&gt; entries = dir.getDirectoryEntries();</span>
+
+<span class="fc bfc" id="L614" title="All 2 branches covered.">            for (final TiffField entry : entries) {</span>
+<span class="fc" id="L615">                metadataDirectory.add(entry);</span>
+<span class="fc" id="L616">            }</span>
+
+<span class="fc" id="L618">            result.add(metadataDirectory);</span>
+<span class="fc" id="L619">        }</span>
+
+<span class="fc" id="L621">        return result;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="nc" id="L626">        return &quot;Tiff-Custom&quot;;</span>
+    }
+
+    private PhotometricInterpreter getPhotometricInterpreter(final TiffDirectory directory, final int photometricInterpretation, final int bitsPerPixel,
+            final int[] bitsPerSample, final int predictor, final int samplesPerPixel, final int width, final int height) throws ImagingException {
+<span class="pc bpc" id="L631" title="3 of 8 branches missed.">        switch (photometricInterpretation) {</span>
+        case 0:
+        case 1:
+<span class="fc bfc" id="L634" title="All 2 branches covered.">            final boolean invert = photometricInterpretation == 0;</span>
+
+<span class="fc" id="L636">            return new PhotometricInterpreterBiLevel(samplesPerPixel, bitsPerSample, predictor, width, height, invert);</span>
+        case 3: {
+            // Palette
+<span class="fc" id="L639">            final int[] colorMap = directory.findField(TiffTagConstants.TIFF_TAG_COLOR_MAP, true).getIntArrayValue();</span>
+
+<span class="fc" id="L641">            final int expectedColormapSize = 3 * (1 &lt;&lt; bitsPerPixel);</span>
+
+<span class="pc bpc" id="L643" title="1 of 2 branches missed.">            if (colorMap.length != expectedColormapSize) {</span>
+<span class="nc" id="L644">                throw new ImagingException(&quot;Tiff: fColorMap.length (&quot; + colorMap.length + &quot;) != expectedColormapSize (&quot; + expectedColormapSize + &quot;)&quot;);</span>
+            }
+
+<span class="fc" id="L647">            return new PhotometricInterpreterPalette(samplesPerPixel, bitsPerSample, predictor, width, height, colorMap);</span>
+        }
+        case 2: // RGB
+<span class="fc" id="L650">            return new PhotometricInterpreterRgb(samplesPerPixel, bitsPerSample, predictor, width, height);</span>
+        case 5: // CMYK
+<span class="fc" id="L652">            return new PhotometricInterpreterCmyk(samplesPerPixel, bitsPerSample, predictor, width, height);</span>
+        case 6: {
+//            final double[] yCbCrCoefficients = directory.findField(
+//                    TiffTagConstants.TIFF_TAG_YCBCR_COEFFICIENTS, true)
+//                    .getDoubleArrayValue();
+//
+//            final int[] yCbCrPositioning = directory.findField(
+//                    TiffTagConstants.TIFF_TAG_YCBCR_POSITIONING, true)
+//                    .getIntArrayValue();
+//            final int[] yCbCrSubSampling = directory.findField(
+//                    TiffTagConstants.TIFF_TAG_YCBCR_SUB_SAMPLING, true)
+//                    .getIntArrayValue();
+//
+//            final double[] referenceBlackWhite = directory.findField(
+//                    TiffTagConstants.TIFF_TAG_REFERENCE_BLACK_WHITE, true)
+//                    .getDoubleArrayValue();
+
+<span class="fc" id="L669">            return new PhotometricInterpreterYCbCr(samplesPerPixel, bitsPerSample, predictor, width, height);</span>
+        }
+
+        case 8:
+<span class="nc" id="L673">            return new PhotometricInterpreterCieLab(samplesPerPixel, bitsPerSample, predictor, width, height);</span>
+
+        case 32844:
+        case 32845: {
+//            final boolean yonly = (photometricInterpretation == 32844);
+<span class="nc" id="L678">            return new PhotometricInterpreterLogLuv(samplesPerPixel, bitsPerSample, predictor, width, height);</span>
+        }
+
+        default:
+<span class="nc" id="L682">            throw new ImagingException(&quot;TIFF: Unknown fPhotometricInterpretation: &quot; + photometricInterpretation);</span>
+        }
+    }
+
+    /**
+     * Reads the content of a TIFF file that contains numerical data samples rather than image-related pixels.
+     * &lt;p&gt;
+     * If desired, sub-image data can be read from the file by using a Java {@code TiffImagingParameters} instance to specify the subsection of the image that
+     * is required. The following code illustrates the approach:
+     *
+     * &lt;pre&gt;
+     * int x; // coordinate (column) of corner of sub-image
+     * int y; // coordinate (row) of corner of sub-image
+     * int width; // width of sub-image
+     * int height; // height of sub-image
+     *
+     * TiffImagingParameters params = new TiffImagingParameters();
+     * params.setSubImageX(x);
+     * params.setSubImageY(y);
+     * params.setSubImageWidth(width);
+     * params.setSubImageHeight(height);
+     * TiffRasterData raster = readFloatingPointRasterData(directory, byteOrder, params);
+     * &lt;/pre&gt;
+     *
+     * @param directory the TIFF directory pointing to the data to be extracted (TIFF files may contain multiple directories)
+     * @param byteOrder the byte order of the data to be extracted
+     * @param params    an optional parameter object instance
+     * @return a valid instance
+     * @throws ImagingException in the event of incompatible or malformed data
+     * @throws IOException      in the event of an I/O error
+     */
+    TiffRasterData getRasterData(final TiffDirectory directory, final ByteOrder byteOrder, TiffImagingParameters params) throws ImagingException, IOException {
+<span class="fc bfc" id="L714" title="All 2 branches covered.">        if (params == null) {</span>
+<span class="fc" id="L715">            params = getDefaultParameters();</span>
+        }
+
+<span class="fc" id="L718">        final short[] sSampleFmt = directory.getFieldValue(TiffTagConstants.TIFF_TAG_SAMPLE_FORMAT, true);</span>
+<span class="pc bpc" id="L719" title="2 of 4 branches missed.">        if (sSampleFmt == null || sSampleFmt.length &lt; 1) {</span>
+<span class="nc" id="L720">            throw new ImagingException(&quot;Directory does not specify numeric raster data&quot;);</span>
+        }
+
+<span class="fc" id="L723">        int samplesPerPixel = 1;</span>
+<span class="fc" id="L724">        final TiffField samplesPerPixelField = directory.findField(TiffTagConstants.TIFF_TAG_SAMPLES_PER_PIXEL);</span>
+<span class="pc bpc" id="L725" title="1 of 2 branches missed.">        if (samplesPerPixelField != null) {</span>
+<span class="fc" id="L726">            samplesPerPixel = samplesPerPixelField.getIntValue();</span>
+        }
+
+<span class="fc" id="L729">        int[] bitsPerSample = { 1 };</span>
+<span class="fc" id="L730">        int bitsPerPixel = samplesPerPixel;</span>
+<span class="fc" id="L731">        final TiffField bitsPerSampleField = directory.findField(TiffTagConstants.TIFF_TAG_BITS_PER_SAMPLE);</span>
+<span class="pc bpc" id="L732" title="1 of 2 branches missed.">        if (bitsPerSampleField != null) {</span>
+<span class="fc" id="L733">            bitsPerSample = bitsPerSampleField.getIntArrayValue();</span>
+<span class="fc" id="L734">            bitsPerPixel = bitsPerSampleField.getIntValueOrArraySum();</span>
+        }
+
+        final short compressionFieldValue;
+<span class="pc bpc" id="L738" title="1 of 2 branches missed.">        if (directory.findField(TiffTagConstants.TIFF_TAG_COMPRESSION) != null) {</span>
+<span class="fc" id="L739">            compressionFieldValue = directory.getFieldValue(TiffTagConstants.TIFF_TAG_COMPRESSION);</span>
+        } else {
+<span class="nc" id="L741">            compressionFieldValue = TiffConstants.COMPRESSION_UNCOMPRESSED_1;</span>
+        }
+<span class="fc" id="L743">        final int compression = 0xffff &amp; compressionFieldValue;</span>
+
+<span class="fc" id="L745">        final int width = directory.getSingleFieldValue(TiffTagConstants.TIFF_TAG_IMAGE_WIDTH);</span>
+<span class="fc" id="L746">        final int height = directory.getSingleFieldValue(TiffTagConstants.TIFF_TAG_IMAGE_LENGTH);</span>
+
+<span class="fc" id="L748">        Rectangle subImage = checkForSubImage(params);</span>
+<span class="fc bfc" id="L749" title="All 2 branches covered.">        if (subImage != null) {</span>
+            // Check for valid subimage specification. The following checks
+            // are consistent with BufferedImage.getSubimage()
+<span class="pc bpc" id="L752" title="1 of 2 branches missed.">            if (subImage.width &lt;= 0) {</span>
+<span class="nc" id="L753">                throw new ImagingException(&quot;Negative or zero subimage width.&quot;);</span>
+            }
+<span class="pc bpc" id="L755" title="1 of 2 branches missed.">            if (subImage.height &lt;= 0) {</span>
+<span class="nc" id="L756">                throw new ImagingException(&quot;Negative or zero subimage height.&quot;);</span>
+            }
+<span class="pc bpc" id="L758" title="2 of 4 branches missed.">            if (subImage.x &lt; 0 || subImage.x &gt;= width) {</span>
+<span class="nc" id="L759">                throw new ImagingException(&quot;Subimage x is outside raster.&quot;);</span>
+            }
+<span class="fc bfc" id="L761" title="All 2 branches covered.">            if (subImage.x + subImage.width &gt; width) {</span>
+<span class="fc" id="L762">                throw new ImagingException(&quot;Subimage (x+width) is outside raster.&quot;);</span>
+            }
+<span class="pc bpc" id="L764" title="2 of 4 branches missed.">            if (subImage.y &lt; 0 || subImage.y &gt;= height) {</span>
+<span class="nc" id="L765">                throw new ImagingException(&quot;Subimage y is outside raster.&quot;);</span>
+            }
+<span class="pc bpc" id="L767" title="1 of 2 branches missed.">            if (subImage.y + subImage.height &gt; height) {</span>
+<span class="nc" id="L768">                throw new ImagingException(&quot;Subimage (y+height) is outside raster.&quot;);</span>
+            }
+
+            // if the subimage is just the same thing as the whole
+            // image, suppress the subimage processing
+<span class="fc bfc" id="L773" title="All 8 branches covered.">            if (subImage.x == 0 &amp;&amp; subImage.y == 0 &amp;&amp; subImage.width == width &amp;&amp; subImage.height == height) {</span>
+<span class="fc" id="L774">                subImage = null;</span>
+            }
+        }
+
+        // int bitsPerPixel = getTagAsValueOrArraySum(entries,
+        // TIFF_TAG_BITS_PER_SAMPLE);
+<span class="fc" id="L780">        int predictor = -1;</span>
+        {
+            // dumpOptionalNumberTag(entries, TIFF_TAG_FILL_ORDER);
+            // dumpOptionalNumberTag(entries, TIFF_TAG_FREE_BYTE_COUNTS);
+            // dumpOptionalNumberTag(entries, TIFF_TAG_FREE_OFFSETS);
+            // dumpOptionalNumberTag(entries, TIFF_TAG_ORIENTATION);
+            // dumpOptionalNumberTag(entries, TIFF_TAG_PLANAR_CONFIGURATION);
+<span class="fc" id="L787">            final TiffField predictorField = directory.findField(TiffTagConstants.TIFF_TAG_PREDICTOR);</span>
+<span class="fc bfc" id="L788" title="All 2 branches covered.">            if (null != predictorField) {</span>
+<span class="fc" id="L789">                predictor = predictorField.getIntValueOrArraySum();</span>
+            }
+        }
+
+        // Obtain the planar configuration
+<span class="fc" id="L794">        final TiffField pcField = directory.findField(TiffTagConstants.TIFF_TAG_PLANAR_CONFIGURATION);</span>
+<span class="pc bpc" id="L795" title="1 of 2 branches missed.">        final TiffPlanarConfiguration planarConfiguration = pcField == null ? TiffPlanarConfiguration.CHUNKY</span>
+<span class="fc" id="L796">                : TiffPlanarConfiguration.lenientValueOf(pcField.getIntValue());</span>
+
+<span class="fc bfc" id="L798" title="All 2 branches covered.">        if (sSampleFmt[0] == TiffTagConstants.SAMPLE_FORMAT_VALUE_IEEE_FLOATING_POINT) {</span>
+<span class="pc bpc" id="L799" title="1 of 4 branches missed.">            if (bitsPerSample[0] != 32 &amp;&amp; bitsPerSample[0] != 64) {</span>
+<span class="nc" id="L800">                throw new ImagingException(&quot;TIFF floating-point data uses unsupported bits-per-sample: &quot; + bitsPerSample[0]);</span>
+            }
+
+<span class="pc bpc" id="L803" title="2 of 6 branches missed.">            if (predictor != -1 &amp;&amp; predictor != TiffTagConstants.PREDICTOR_VALUE_NONE</span>
+                    &amp;&amp; predictor != TiffTagConstants.PREDICTOR_VALUE_FLOATING_POINT_DIFFERENCING) {
+<span class="nc" id="L805">                throw new ImagingException(&quot;TIFF floating-point data uses unsupported horizontal-differencing predictor&quot;);</span>
+            }
+<span class="pc bpc" id="L807" title="1 of 2 branches missed.">        } else if (sSampleFmt[0] == TiffTagConstants.SAMPLE_FORMAT_VALUE_TWOS_COMPLEMENT_SIGNED_INTEGER) {</span>
+
+<span class="pc bpc" id="L809" title="1 of 2 branches missed.">            if (samplesPerPixel != 1) {</span>
+<span class="nc" id="L810">                throw new ImagingException(&quot;TIFF integer data uses unsupported samples per pixel: &quot; + samplesPerPixel);</span>
+            }
+
+<span class="pc bpc" id="L813" title="1 of 4 branches missed.">            if (bitsPerPixel != 16 &amp;&amp; bitsPerPixel != 32) {</span>
+<span class="nc" id="L814">                throw new ImagingException(&quot;TIFF integer data uses unsupported bits-per-pixel: &quot; + bitsPerPixel);</span>
+            }
+
+<span class="pc bpc" id="L817" title="5 of 6 branches missed.">            if (predictor != -1 &amp;&amp; predictor != TiffTagConstants.PREDICTOR_VALUE_NONE</span>
+                    &amp;&amp; predictor != TiffTagConstants.PREDICTOR_VALUE_HORIZONTAL_DIFFERENCING) {
+<span class="nc" id="L819">                throw new ImagingException(&quot;TIFF integer data uses unsupported horizontal-differencing predictor&quot;);</span>
+            }
+        } else {
+<span class="nc" id="L822">            throw new ImagingException(&quot;TIFF does not provide a supported raster-data format&quot;);</span>
+        }
+
+        // The photometric interpreter is not used, but the image-based
+        // data reader classes require one. So we create a dummy interpreter.
+<span class="fc" id="L827">        final PhotometricInterpreter photometricInterpreter = new PhotometricInterpreterBiLevel(samplesPerPixel, bitsPerSample, predictor, width, height,</span>
+                false);
+
+<span class="fc" id="L830">        final AbstractTiffImageData imageData = directory.getTiffImageData();</span>
+
+<span class="fc" id="L832">        final ImageDataReader dataReader = imageData.getDataReader(directory, photometricInterpreter, bitsPerPixel, bitsPerSample, predictor, samplesPerPixel,</span>
+                width, height, compression, planarConfiguration, byteOrder);
+
+<span class="fc" id="L835">        return dataReader.readRasterData(subImage);</span>
+    }
+
+    @Override
+    public String getXmpXml(final ByteSource byteSource, XmpImagingParameters&lt;TiffImagingParameters&gt; params) throws ImagingException, IOException {
+<span class="pc bpc" id="L840" title="1 of 2 branches missed.">        if (params == null) {</span>
+<span class="fc" id="L841">            params = new XmpImagingParameters&lt;&gt;();</span>
+        }
+<span class="fc" id="L843">        final FormatCompliance formatCompliance = FormatCompliance.getDefault();</span>
+<span class="fc" id="L844">        final TiffContents contents = new TiffReader(params.isStrict()).readDirectories(byteSource, false, formatCompliance);</span>
+<span class="fc" id="L845">        final TiffDirectory directory = contents.directories.get(0);</span>
+
+<span class="fc" id="L847">        final byte[] bytes = directory.getFieldValue(TiffTagConstants.TIFF_TAG_XMP, false);</span>
+<span class="pc bpc" id="L848" title="1 of 2 branches missed.">        if (bytes == null) {</span>
+<span class="fc" id="L849">            return null;</span>
+        }
+
+        // segment data is UTF-8 encoded xml.
+<span class="nc" id="L853">        return new String(bytes, StandardCharsets.UTF_8);</span>
+    }
+
+    @Override
+    public void writeImage(final BufferedImage src, final OutputStream os, TiffImagingParameters params) throws ImagingException, IOException {
+<span class="fc bfc" id="L858" title="All 2 branches covered.">        if (params == null) {</span>
+<span class="fc" id="L859">            params = new TiffImagingParameters();</span>
+        }
+<span class="fc" id="L861">        new TiffImageWriterLossy().writeImage(src, os, params);</span>
+<span class="fc" id="L862">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
