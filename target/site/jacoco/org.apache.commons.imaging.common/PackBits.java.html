@@ -26,50 +26,50 @@ public final class PackBits {
 
     public static byte[] compress(final byte[] bytes) throws IOException {
         // max length 1 extra byte for every 128
-<span class="nc" id="L29">        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(Allocator.checkByteArray(bytes.length * 2))</span>
-<span class="nc" id="L30">                .get()) {</span>
-<span class="nc" id="L31">            int ptr = 0;</span>
-<span class="nc bnc" id="L32" title="All 2 branches missed.">            while (ptr &lt; bytes.length) {</span>
-<span class="nc" id="L33">                int dup = findNextDuplicate(bytes, ptr);</span>
+<span class="fc" id="L29">        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(Allocator.checkByteArray(bytes.length * 2))</span>
+<span class="fc" id="L30">                .get()) {</span>
+<span class="fc" id="L31">            int ptr = 0;</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">            while (ptr &lt; bytes.length) {</span>
+<span class="fc" id="L33">                int dup = findNextDuplicate(bytes, ptr);</span>
 
-<span class="nc bnc" id="L35" title="All 2 branches missed.">                if (dup == ptr) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">                if (dup == ptr) {</span>
                     // write run length
-<span class="nc" id="L37">                    final int len = findRunLength(bytes, dup);</span>
-<span class="nc" id="L38">                    final int actualLen = Math.min(len, 128);</span>
-<span class="nc" id="L39">                    baos.write(-(actualLen - 1));</span>
-<span class="nc" id="L40">                    baos.write(bytes[ptr]);</span>
-<span class="nc" id="L41">                    ptr += actualLen;</span>
-<span class="nc" id="L42">                } else {</span>
+<span class="fc" id="L37">                    final int len = findRunLength(bytes, dup);</span>
+<span class="fc" id="L38">                    final int actualLen = Math.min(len, 128);</span>
+<span class="fc" id="L39">                    baos.write(-(actualLen - 1));</span>
+<span class="fc" id="L40">                    baos.write(bytes[ptr]);</span>
+<span class="fc" id="L41">                    ptr += actualLen;</span>
+<span class="fc" id="L42">                } else {</span>
                     // write literals
-<span class="nc" id="L44">                    int len = dup - ptr;</span>
+<span class="fc" id="L44">                    int len = dup - ptr;</span>
 
-<span class="nc bnc" id="L46" title="All 2 branches missed.">                    if (dup &gt; 0) {</span>
-<span class="nc" id="L47">                        final int runlen = findRunLength(bytes, dup);</span>
-<span class="nc bnc" id="L48" title="All 2 branches missed.">                        if (runlen &lt; 3) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">                    if (dup &gt; 0) {</span>
+<span class="fc" id="L47">                        final int runlen = findRunLength(bytes, dup);</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                        if (runlen &lt; 3) {</span>
                             // may want to discard next run.
-<span class="nc" id="L50">                            final int nextptr = ptr + len + runlen;</span>
-<span class="nc" id="L51">                            final int nextdup = findNextDuplicate(bytes, nextptr);</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">                            if (nextdup != nextptr) {</span>
+<span class="fc" id="L50">                            final int nextptr = ptr + len + runlen;</span>
+<span class="fc" id="L51">                            final int nextdup = findNextDuplicate(bytes, nextptr);</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                            if (nextdup != nextptr) {</span>
                                 // discard 2-byte run
-<span class="nc" id="L54">                                dup = nextdup;</span>
-<span class="nc" id="L55">                                len = dup - ptr;</span>
+<span class="fc" id="L54">                                dup = nextdup;</span>
+<span class="fc" id="L55">                                len = dup - ptr;</span>
                             }
                         }
                     }
 
-<span class="nc bnc" id="L60" title="All 2 branches missed.">                    if (dup &lt; 0) {</span>
-<span class="nc" id="L61">                        len = bytes.length - ptr;</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">                    if (dup &lt; 0) {</span>
+<span class="fc" id="L61">                        len = bytes.length - ptr;</span>
                     }
-<span class="nc" id="L63">                    final int actualLen = Math.min(len, 128);</span>
+<span class="fc" id="L63">                    final int actualLen = Math.min(len, 128);</span>
 
-<span class="nc" id="L65">                    baos.write(actualLen - 1);</span>
-<span class="nc bnc" id="L66" title="All 2 branches missed.">                    for (int i = 0; i &lt; actualLen; i++) {</span>
-<span class="nc" id="L67">                        baos.write(bytes[ptr]);</span>
-<span class="nc" id="L68">                        ptr++;</span>
+<span class="fc" id="L65">                    baos.write(actualLen - 1);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                    for (int i = 0; i &lt; actualLen; i++) {</span>
+<span class="fc" id="L67">                        baos.write(bytes[ptr]);</span>
+<span class="fc" id="L68">                        ptr++;</span>
                     }
                 }
-<span class="nc" id="L71">            }</span>
-<span class="nc" id="L72">            return baos.toByteArray();</span>
+<span class="fc" id="L71">            }</span>
+<span class="fc" id="L72">            return baos.toByteArray();</span>
         }
     }
 
@@ -119,35 +119,35 @@ public final class PackBits {
 
     private static int findNextDuplicate(final byte[] bytes, final int start) {
         // int last = -1;
-<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (start &gt;= bytes.length) {</span>
-<span class="nc" id="L123">            return -1;</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (start &gt;= bytes.length) {</span>
+<span class="fc" id="L123">            return -1;</span>
         }
 
-<span class="nc" id="L126">        byte prev = bytes[start];</span>
+<span class="fc" id="L126">        byte prev = bytes[start];</span>
 
-<span class="nc bnc" id="L128" title="All 2 branches missed.">        for (int i = start + 1; i &lt; bytes.length; i++) {</span>
-<span class="nc" id="L129">            final byte b = bytes[i];</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        for (int i = start + 1; i &lt; bytes.length; i++) {</span>
+<span class="fc" id="L129">            final byte b = bytes[i];</span>
 
-<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (b == prev) {</span>
-<span class="nc" id="L132">                return i - 1;</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (b == prev) {</span>
+<span class="fc" id="L132">                return i - 1;</span>
             }
 
-<span class="nc" id="L135">            prev = b;</span>
+<span class="fc" id="L135">            prev = b;</span>
         }
 
-<span class="nc" id="L138">        return -1;</span>
+<span class="fc" id="L138">        return -1;</span>
     }
 
     private static int findRunLength(final byte[] bytes, final int start) {
-<span class="nc" id="L142">        final byte b = bytes[start];</span>
+<span class="fc" id="L142">        final byte b = bytes[start];</span>
 
         int i;
 
-<span class="nc bnc" id="L146" title="All 4 branches missed.">        for (i = start + 1; i &lt; bytes.length &amp;&amp; bytes[i] == b; i++) { // NOPMD</span>
+<span class="fc bfc" id="L146" title="All 4 branches covered.">        for (i = start + 1; i &lt; bytes.length &amp;&amp; bytes[i] == b; i++) { // NOPMD</span>
             // do nothing
         }
 
-<span class="nc" id="L150">        return i - start;</span>
+<span class="fc" id="L150">        return i - start;</span>
     }
 
     private PackBits() {

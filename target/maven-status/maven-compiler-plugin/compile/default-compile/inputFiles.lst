@@ -143,6 +143,7 @@ C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\common
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\chunks\PngChunkText.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\chunks\PngChunkZtxt.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\ChunkType.java
+C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\Extension.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\FilterType.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\GammaCorrection.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\InterlaceMethod.java
@@ -152,6 +153,7 @@ C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\common
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\PngConstants.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\PngCrc.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\PngImageInfo.java
+C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\PngImageMetadata.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\PngImageParser.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\PngImagingParameters.java
 C:\Users\57318\Documents\MSc_SAL\commons-imaging\src\main\java\org\apache\commons\imaging\formats\png\PngWriter.java

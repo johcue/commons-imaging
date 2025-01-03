@@ -351,7 +351,7 @@ public final class Imaging {
      * @throws IOException      if it fails to read the image data
      */
     public static ICC_Profile getIccProfile(final InputStream is, final String fileName) throws ImagingException, IOException {
-<span class="nc" id="L354">        return getIccProfile(ByteSource.inputStream(is, fileName));</span>
+<span class="fc" id="L354">        return getIccProfile(ByteSource.inputStream(is, fileName));</span>
     }
 
     /**

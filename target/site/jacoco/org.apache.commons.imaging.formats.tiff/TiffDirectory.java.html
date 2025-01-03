@@ -179,11 +179,11 @@ public class TiffDirectory extends AbstractTiffElement implements Iterable&lt;Ti
     }
 
     public Object getFieldValue(final TagInfo tag) throws ImagingException {
-<span class="nc" id="L182">        final TiffField field = findField(tag);</span>
-<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (field == null) {</span>
+<span class="fc" id="L182">        final TiffField field = findField(tag);</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if (field == null) {</span>
 <span class="nc" id="L184">            return null;</span>
         }
-<span class="nc" id="L186">        return field.getValue();</span>
+<span class="fc" id="L186">        return field.getValue();</span>
     }
 
     public String[] getFieldValue(final TagInfoAscii tag, final boolean mustExist) throws ImagingException {

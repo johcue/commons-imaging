@@ -98,11 +98,11 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
         );
     }
 
-<span class="fc" id="L101">    protected AbstractImageParser() {</span>
+<span class="fc" id="L101">    public AbstractImageParser() {</span>
         // defaults to big-endian
 <span class="fc" id="L103">    }</span>
 
-    protected AbstractImageParser(final ByteOrder byteOrder) {
+    public AbstractImageParser(final ByteOrder byteOrder) {
 <span class="fc" id="L106">        super(byteOrder);</span>
 <span class="fc" id="L107">    }</span>
 
@@ -260,9 +260,10 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
 
 <span class="nc" id="L261">        final List&lt;BufferedImage&gt; result = new ArrayList&lt;&gt;();</span>
 
-<span class="nc" id="L263">        result.add(bi);</span>
+        // FIXME this doesn't look like we're actually getting all images contained in the given ByteSource...
+<span class="nc" id="L264">        result.add(bi);</span>
 
-<span class="nc" id="L265">        return result;</span>
+<span class="nc" id="L266">        return result;</span>
     }
 
     /**
@@ -274,11 +275,11 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final List&lt;BufferedImage&gt; getAllBufferedImages(final File file) throws ImagingException, IOException {
-<span class="pc bpc" id="L277" title="1 of 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
-<span class="nc" id="L278">            return new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
+<span class="nc" id="L279">            return null;</span>
         }
 
-<span class="fc" id="L281">        return getAllBufferedImages(ByteSource.file(file));</span>
+<span class="fc" id="L282">        return getAllBufferedImages(ByteSource.file(file));</span>
     }
 
     /**
@@ -293,7 +294,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final BufferedImage getBufferedImage(final byte[] bytes, final T params) throws ImagingException, IOException {
-<span class="fc" id="L296">        return getBufferedImage(ByteSource.array(bytes), params);</span>
+<span class="fc" id="L297">        return getBufferedImage(ByteSource.array(bytes), params);</span>
     }
 
     /**
@@ -321,11 +322,11 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final BufferedImage getBufferedImage(final File file, final T params) throws ImagingException, IOException {
-<span class="pc bpc" id="L324" title="1 of 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
-<span class="nc" id="L325">            return null;</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
+<span class="nc" id="L326">            return null;</span>
         }
 
-<span class="fc" id="L328">        return getBufferedImage(ByteSource.file(file), params);</span>
+<span class="fc" id="L329">        return getBufferedImage(ByteSource.file(file), params);</span>
     }
 
     /**
@@ -336,17 +337,17 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @return A valid instance of an implementation of a IBufferedImageFactory.
      */
     protected BufferedImageFactory getBufferedImageFactory(final T params) {
-<span class="fc bfc" id="L339" title="All 2 branches covered.">        if (params == null) {</span>
-<span class="fc" id="L340">            return new SimpleBufferedImageFactory();</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">        if (params == null) {</span>
+<span class="fc" id="L341">            return new SimpleBufferedImageFactory();</span>
         }
 
-<span class="fc" id="L343">        final BufferedImageFactory result = params.getBufferedImageFactory();</span>
+<span class="fc" id="L344">        final BufferedImageFactory result = params.getBufferedImageFactory();</span>
 
-<span class="fc bfc" id="L345" title="All 2 branches covered.">        if (null != result) {</span>
-<span class="fc" id="L346">            return result;</span>
+<span class="fc bfc" id="L346" title="All 2 branches covered.">        if (null != result) {</span>
+<span class="fc" id="L347">            return result;</span>
         }
 
-<span class="fc" id="L349">        return new SimpleBufferedImageFactory();</span>
+<span class="fc" id="L350">        return new SimpleBufferedImageFactory();</span>
     }
 
     /**
@@ -373,7 +374,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      may be thrown by sub-classes
      */
     public final FormatCompliance getFormatCompliance(final byte[] bytes) throws ImagingException, IOException {
-<span class="nc" id="L376">        return getFormatCompliance(ByteSource.array(bytes));</span>
+<span class="nc" id="L377">        return getFormatCompliance(ByteSource.array(bytes));</span>
     }
 
     /**
@@ -385,7 +386,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      may be thrown by sub-classes
      */
     public FormatCompliance getFormatCompliance(final ByteSource byteSource) throws ImagingException, IOException {
-<span class="nc" id="L388">        return null;</span>
+<span class="nc" id="L389">        return null;</span>
     }
 
     /**
@@ -397,11 +398,11 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      may be thrown by sub-classes
      */
     public final FormatCompliance getFormatCompliance(final File file) throws ImagingException, IOException {
-<span class="nc bnc" id="L400" title="All 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
-<span class="nc" id="L401">            return null;</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
+<span class="nc" id="L402">            return null;</span>
         }
 
-<span class="nc" id="L404">        return getFormatCompliance(ByteSource.file(file));</span>
+<span class="nc" id="L405">        return getFormatCompliance(ByteSource.file(file));</span>
     }
 
     /**
@@ -414,7 +415,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final byte[] getIccProfileBytes(final byte[] bytes) throws ImagingException, IOException {
-<span class="nc" id="L417">        return getIccProfileBytes(bytes, null);</span>
+<span class="nc" id="L418">        return getIccProfileBytes(bytes, null);</span>
     }
 
     /**
@@ -428,7 +429,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final byte[] getIccProfileBytes(final byte[] bytes, final T params) throws ImagingException, IOException {
-<span class="nc" id="L431">        return getIccProfileBytes(ByteSource.array(bytes), params);</span>
+<span class="nc" id="L432">        return getIccProfileBytes(ByteSource.array(bytes), params);</span>
     }
 
     /**
@@ -453,7 +454,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final byte[] getIccProfileBytes(final File file) throws ImagingException, IOException {
-<span class="nc" id="L456">        return getIccProfileBytes(file, null);</span>
+<span class="nc" id="L457">        return getIccProfileBytes(file, null);</span>
     }
 
     /**
@@ -467,15 +468,15 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final byte[] getIccProfileBytes(final File file, final T params) throws ImagingException, IOException {
-<span class="nc bnc" id="L470" title="All 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
-<span class="nc" id="L471">            return new byte[0];</span>
+<span class="nc bnc" id="L471" title="All 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
+<span class="nc" id="L472">            return null;</span>
         }
 
-<span class="nc bnc" id="L474" title="All 2 branches missed.">        if (LOGGER.isLoggable(Level.FINEST)) {</span>
-<span class="nc" id="L475">            LOGGER.finest(getName() + &quot;: &quot; + file.getName());</span>
+<span class="nc bnc" id="L475" title="All 2 branches missed.">        if (LOGGER.isLoggable(Level.FINEST)) {</span>
+<span class="nc" id="L476">            LOGGER.finest(getName() + &quot;: &quot; + file.getName());</span>
         }
 
-<span class="nc" id="L478">        return getIccProfileBytes(ByteSource.file(file), params);</span>
+<span class="nc" id="L479">        return getIccProfileBytes(ByteSource.file(file), params);</span>
     }
 
     /**
@@ -494,7 +495,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful data access operation.
      */
     public final ImageInfo getImageInfo(final byte[] bytes, final T params) throws ImagingException, IOException {
-<span class="fc" id="L497">        return getImageInfo(ByteSource.array(bytes), params);</span>
+<span class="fc" id="L498">        return getImageInfo(ByteSource.array(bytes), params);</span>
     }
 
     /**
@@ -507,7 +508,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful data access operation.
      */
     public final ImageInfo getImageInfo(final ByteSource byteSource) throws ImagingException, IOException {
-<span class="nc" id="L510">        return getImageInfo(byteSource, null);</span>
+<span class="nc" id="L511">        return getImageInfo(byteSource, null);</span>
     }
 
     /**
@@ -544,11 +545,11 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful file read or access operation.
      */
     public final ImageInfo getImageInfo(final File file, final T params) throws ImagingException, IOException {
-<span class="pc bpc" id="L547" title="1 of 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
-<span class="nc" id="L548">            return null;</span>
+<span class="pc bpc" id="L548" title="1 of 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
+<span class="nc" id="L549">            return null;</span>
         }
 
-<span class="fc" id="L551">        return getImageInfo(ByteSource.file(file), params);</span>
+<span class="fc" id="L552">        return getImageInfo(ByteSource.file(file), params);</span>
     }
 
     /**
@@ -560,7 +561,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final Dimension getImageSize(final byte[] bytes) throws ImagingException, IOException {
-<span class="nc" id="L563">        return getImageSize(bytes, null);</span>
+<span class="nc" id="L564">        return getImageSize(bytes, null);</span>
     }
 
     /**
@@ -573,7 +574,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final Dimension getImageSize(final byte[] bytes, final T params) throws ImagingException, IOException {
-<span class="nc" id="L576">        return getImageSize(ByteSource.array(bytes), params);</span>
+<span class="nc" id="L577">        return getImageSize(ByteSource.array(bytes), params);</span>
     }
 
     /**
@@ -596,7 +597,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful read or access operation.
      */
     public final Dimension getImageSize(final File file) throws ImagingException, IOException {
-<span class="nc" id="L599">        return getImageSize(file, null);</span>
+<span class="nc" id="L600">        return getImageSize(file, null);</span>
     }
 
     /**
@@ -610,11 +611,11 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      */
     public final Dimension getImageSize(final File file, final T params) throws ImagingException, IOException {
 
-<span class="nc bnc" id="L613" title="All 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
-<span class="nc" id="L614">            return null;</span>
+<span class="nc bnc" id="L614" title="All 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
+<span class="nc" id="L615">            return null;</span>
         }
 
-<span class="nc" id="L617">        return getImageSize(ByteSource.file(file), params);</span>
+<span class="nc" id="L618">        return getImageSize(ByteSource.file(file), params);</span>
     }
 
     /**
@@ -628,7 +629,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful data read operation.
      */
     public final ImageMetadata getMetadata(final byte[] bytes) throws ImagingException, IOException {
-<span class="fc" id="L631">        return getMetadata(bytes, null);</span>
+<span class="fc" id="L632">        return getMetadata(bytes, null);</span>
     }
 
     /**
@@ -648,7 +649,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful data read operation.
      */
     public final ImageMetadata getMetadata(final byte[] bytes, final T params) throws ImagingException, IOException {
-<span class="fc" id="L651">        return getMetadata(ByteSource.array(bytes), params);</span>
+<span class="fc" id="L652">        return getMetadata(ByteSource.array(bytes), params);</span>
     }
 
     /**
@@ -662,7 +663,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful data read operation.
      */
     public final ImageMetadata getMetadata(final ByteSource byteSource) throws ImagingException, IOException {
-<span class="nc" id="L665">        return getMetadata(byteSource, null);</span>
+<span class="nc" id="L666">        return getMetadata(byteSource, null);</span>
     }
 
     /**
@@ -694,7 +695,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful file read or access operation.
      */
     public final ImageMetadata getMetadata(final File file) throws ImagingException, IOException {
-<span class="fc" id="L697">        return getMetadata(file, null);</span>
+<span class="fc" id="L698">        return getMetadata(file, null);</span>
     }
 
     /**
@@ -714,15 +715,15 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of unsuccessful file read or access operation.
      */
     public final ImageMetadata getMetadata(final File file, final T params) throws ImagingException, IOException {
-<span class="pc bpc" id="L717" title="1 of 2 branches missed.">        if (LOGGER.isLoggable(Level.FINEST)) {</span>
-<span class="nc" id="L718">            LOGGER.finest(getName() + &quot;.getMetadata&quot; + &quot;: &quot; + file.getName());</span>
+<span class="pc bpc" id="L718" title="1 of 2 branches missed.">        if (LOGGER.isLoggable(Level.FINEST)) {</span>
+<span class="nc" id="L719">            LOGGER.finest(getName() + &quot;.getMetadata&quot; + &quot;: &quot; + file.getName());</span>
         }
 
-<span class="pc bpc" id="L721" title="1 of 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
-<span class="nc" id="L722">            return null;</span>
+<span class="pc bpc" id="L722" title="1 of 2 branches missed.">        if (!canAcceptExtension(file)) {</span>
+<span class="nc" id="L723">            return null;</span>
         }
 
-<span class="fc" id="L725">        return getMetadata(ByteSource.file(file), params);</span>
+<span class="fc" id="L726">        return getMetadata(ByteSource.file(file), params);</span>
     }
 
     /**
@@ -747,7 +748,7 @@ public abstract class AbstractImageParser&lt;T extends ImagingParameters&lt;T&gt
      * @throws IOException      In the event of an write error from the output stream.
      */
     public void writeImage(final BufferedImage src, final OutputStream os, final T params) throws ImagingException, IOException {
-<span class="nc" id="L750">        throw new ImagingException(&quot;This image format (&quot; + getName() + &quot;) cannot be written.&quot;);</span>
+<span class="nc" id="L751">        throw new ImagingException(&quot;This image format (&quot; + getName() + &quot;) cannot be written.&quot;);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

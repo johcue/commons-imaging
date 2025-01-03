@@ -30,8 +30,6 @@ org\apache\commons\imaging\formats\pcx\RleReaderTest.class
 org\apache\commons\imaging\formats\jpeg\segments\JfifSegmentTest.class
 org\apache\commons\imaging\common\BinaryFileFunctionsTest.class
 org\apache\commons\imaging\formats\bmp\AbstractBmpTest.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_jmhType.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_jmhType_B2.class
 org\apache\commons\imaging\TestImageInfo.class
 org\apache\commons\imaging\color\ColorCieLabTest.class
 org\apache\commons\imaging\formats\ico\IcoRoundtripTest.class
@@ -40,7 +38,6 @@ org\apache\commons\imaging\formats\tiff\TiffBigTiffTest.class
 org\apache\commons\imaging\formats\jpeg\xmp\JpegXmpDumpTest.class
 org\apache\commons\imaging\formats\pcx\PcxReadTest.class
 org\apache\commons\imaging\formats\tiff\TiffImageParserTest.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_processLzw_jmhTest.class
 org\apache\commons\imaging\formats\tiff\photometricinterpreters\PhotometricInterpreterLogLuvTest.class
 org\apache\commons\imaging\formats\tiff\TiffFloatingPointReadTest.class
 org\apache\commons\imaging\formats\ico\IcoRoundtripTest$GeneratorFor32BitBitmaps.class
@@ -68,13 +65,11 @@ org\apache\commons\imaging\formats\jpeg\exif\GpsTest.class
 org\apache\commons\imaging\color\ColorCieLchTest.class
 org\apache\commons\imaging\formats\psd\AbstractPsdTest.class
 org\apache\commons\imaging\formats\tiff\itu_t4\HuffmanTreeExceptionTest.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_processPackbits_jmhTest.class
 org\apache\commons\imaging\formats\dcx\AbstractDcxTest.class
 org\apache\commons\imaging\formats\jpeg\iptc\IptcFullDiscardTest.class
 org\apache\commons\imaging\formats\tiff\JpegImageDataTest.class
 org\apache\commons\imaging\formats\tiff\TiffReadTest.class
 org\apache\commons\imaging\examples\tiff\package-info.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_processUncompressed_jmhTest.class
 org\apache\commons\imaging\formats\ico\IcoImageParserTest.class
 org\apache\commons\imaging\formats\jpeg\exif\MakerNoteFieldTest.class
 org\apache\commons\imaging\formats\png\PngReadTest.class
@@ -114,9 +109,7 @@ org\apache\commons\imaging\bytesource\ByteSourceDataTest$ByteSourceInputStreamRa
 org\apache\commons\imaging\formats\ico\IcoRoundtripTest$GeneratorFor4BitBitmaps.class
 org\apache\commons\imaging\formats\rgbe\RgbeReadTest.class
 org\apache\commons\imaging\formats\bmp\BmpImageParserTest.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_benchmark_jmhTest.class
 org\apache\commons\imaging\common\RationalNumberTest.class
-META-INF\CompilerHints
 org\apache\commons\imaging\formats\jpeg\iptc\IptcDumpTest.class
 org\apache\commons\imaging\formats\ico\AbstractIcoTest.class
 org\apache\commons\imaging\common\RgbBufferedImageFactoryTest.class
@@ -153,7 +146,6 @@ org\apache\commons\imaging\formats\jpeg\exif\AbstractSpecificExifTagTest.class
 org\apache\commons\imaging\formats\tiff\write\PrintShallowSizes.class
 org\apache\commons\imaging\palette\SimplePaletteTest.class
 org\apache\commons\imaging\formats\jpeg\exif\ExifRewriteTest$Rewriter.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_jmhType_B1.class
 org\apache\commons\imaging\formats\ico\IcoRoundtripTest$BitmapGenerator.class
 org\apache\commons\imaging\formats\jpeg\iptc\IptcUpdateTest.class
 org\apache\commons\imaging\formats\jpeg\decoder\JpegDecoderTest.class
@@ -175,7 +167,6 @@ org\apache\commons\imaging\formats\webp\WebPDumpTest.class
 org\apache\commons\imaging\formats\pam\AbstractPamTest.class
 org\apache\commons\imaging\test\PrintShallowObjectSizes.class
 org\apache\commons\imaging\formats\tiff\fieldtypes\FieldTypeShortTest.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_processDeflateAdobe_jmhTest.class
 org\apache\commons\imaging\roundtrip\NullParametersRoundtripTest.class
 org\apache\commons\imaging\formats\tiff\TiffBaseTest.class
 org\apache\commons\imaging\formats\png\chunks\PngChunkTextTest.class
@@ -202,7 +193,6 @@ org\apache\commons\imaging\test\TestResources.class
 org\apache\commons\imaging\examples\ImageWriteExample.class
 org\apache\commons\imaging\formats\psd\ImageResourceBlockTest.class
 org\apache\commons\imaging\formats\tiff\TiffJpegTest.class
-org\apache\commons\imaging\formats\tiff\jmh_generated\TiffRoundtripTest_jmhType_B3.class
 org\apache\commons\imaging\formats\png\PngTextTest.class
 org\apache\commons\imaging\formats\xbm\XbmReadTest.class
 org\apache\commons\imaging\examples\ApacheImagingSpeedAndMemoryTest.class
@@ -214,7 +204,6 @@ org\apache\commons\imaging\examples\tiff\SurveyTiffFolder$1.class
 org\apache\commons\imaging\formats\tiff\taginfos\TagInfoSBytesTest.class
 org\apache\commons\imaging\formats\jpeg\exif\AbstractExifTest.class
 org\apache\commons\imaging\formats\tiff\write\TiffOutputSetTest.class
-META-INF\BenchmarkList
 org\apache\commons\imaging\formats\tiff\TiffFloatingPointRoundTripTest.class
 org\apache\commons\imaging\formats\xbm\XbmBaseTest.class
 org\apache\commons\imaging\bytesource\ByteSourceDataTest$ByteSourceFileFactory.class

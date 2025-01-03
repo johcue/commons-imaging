@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.apache.commons.imaging.formats.bmp.BmpReadTest
 -------------------------------------------------------------------------------
-Tests run: 13, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.098 s -- in org.apache.commons.imaging.formats.bmp.BmpReadTest
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.147 s -- in org.apache.commons.imaging.formats.bmp.BmpReadTest

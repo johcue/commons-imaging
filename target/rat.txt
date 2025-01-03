@@ -2,14 +2,14 @@
 *****************************************************
 Summary
 -------
-Generated at: 2025-01-03T11:24:14+01:00
+Generated at: 2025-01-03T13:01:48+01:00
 
 Notes: 10
-Binaries: 117
+Binaries: 115
 Archives: 1
-Standards: 680
+Standards: 675
 
-Apache Licensed: 680
+Apache Licensed: 675
 Generated Documents: 0
 
 JavaDocs are generated, thus a license header is optional.
@@ -29,7 +29,7 @@ Archives:
   AL    .github/dependabot.yml
   AL    .github/GH-ROBOTS.txt
   AL    .github/pull_request_template.md
-  AL    .github/workflows/codecov_ci.yml
+  AL    .github/workflows/ci.yml
   AL    .github/workflows/codeql-analysis.yml
   AL    .github/workflows/dependency-review.yml
   AL    .github/workflows/maven.yml
@@ -38,21 +38,12 @@ Archives:
   AL    checkstyle-suppressions.xml
   AL    CODE_OF_CONDUCT.md
   AL    CONTRIBUTING.md
-  AL    dir.txt
-  AL    Dockerfile
   N     LICENSE.txt
-  AL    new 1.txt
   N     NOTICE.txt
   AL    pom.xml
   A     randoop-all-4.3.3.jar
-  B     randoop-tests/RegressionTest.class
-  AL    randoop-tests/RegressionTest.java
-  B     randoop-tests/RegressionTest0.class
-  AL    randoop-tests/RegressionTest0.java
   AL    README.md
   N     RELEASE-NOTES.txt
-  AL    scripts/create_jira_issues.py
-  AL    scripts/read_jacoco.py
   AL    SECURITY.md
   AL    src/assembly/bin.xml
   AL    src/assembly/src.xml
@@ -207,6 +198,7 @@ Archives:
   AL    src/main/java/org/apache/commons/imaging/formats/png/chunks/PngChunkText.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/chunks/PngChunkZtxt.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/ChunkType.java
+  AL    src/main/java/org/apache/commons/imaging/formats/png/Extension.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/FilterType.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/GammaCorrection.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/InterlaceMethod.java
@@ -216,6 +208,7 @@ Archives:
   AL    src/main/java/org/apache/commons/imaging/formats/png/PngConstants.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/PngCrc.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/PngImageInfo.java
+  AL    src/main/java/org/apache/commons/imaging/formats/png/PngImageMetadata.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/PngImageParser.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/PngImagingParameters.java
   AL    src/main/java/org/apache/commons/imaging/formats/png/PngWriter.java

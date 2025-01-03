@@ -234,8 +234,8 @@ public class TiffImageMetadata extends GenericImageMetadata {
 <span class="fc" id="L234">        final List&lt;? extends ImageMetadataItem&gt; directories = getDirectories();</span>
 <span class="fc bfc" id="L235" title="All 2 branches covered.">        for (final ImageMetadataItem directory1 : directories) {</span>
 <span class="fc" id="L236">            final Directory directory = (Directory) directory1;</span>
-<span class="pc bpc" id="L237" title="1 of 2 branches missed.">            if (directory.type == directoryType) {</span>
-<span class="nc" id="L238">                return directory.directory;</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">            if (directory.type == directoryType) {</span>
+<span class="fc" id="L238">                return directory.directory;</span>
             }
 <span class="fc" id="L240">        }</span>
 <span class="fc" id="L241">        return null;</span>

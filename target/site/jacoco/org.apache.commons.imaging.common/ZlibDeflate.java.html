@@ -44,13 +44,13 @@ public final class ZlibDeflate {
      * @see DeflaterOutputStream
      */
     public static byte[] compress(final byte[] bytes) throws ImagingException {
-<span class="nc" id="L47">        final ByteArrayOutputStream out = new ByteArrayOutputStream(Allocator.checkByteArray(bytes.length / 2));</span>
-<span class="nc" id="L48">        try (DeflaterOutputStream compressOut = new DeflaterOutputStream(out)) {</span>
-<span class="nc" id="L49">            compressOut.write(bytes);</span>
+<span class="fc" id="L47">        final ByteArrayOutputStream out = new ByteArrayOutputStream(Allocator.checkByteArray(bytes.length / 2));</span>
+<span class="fc" id="L48">        try (DeflaterOutputStream compressOut = new DeflaterOutputStream(out)) {</span>
+<span class="fc" id="L49">            compressOut.write(bytes);</span>
 <span class="nc" id="L50">        } catch (final IOException e) {</span>
 <span class="nc" id="L51">            throw new ImagingException(&quot;Unable to compress image&quot;, e);</span>
-<span class="nc" id="L52">        }</span>
-<span class="nc" id="L53">        return out.toByteArray();</span>
+<span class="fc" id="L52">        }</span>
+<span class="fc" id="L53">        return out.toByteArray();</span>
     }
 
     /**

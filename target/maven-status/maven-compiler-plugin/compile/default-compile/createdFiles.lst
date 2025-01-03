@@ -6,6 +6,7 @@ org\apache\commons\imaging\formats\icns\IcnsImageParser.class
 org\apache\commons\imaging\formats\png\AbstractPngText.class
 org\apache\commons\imaging\formats\tiff\constants\TiffPlanarConfiguration.class
 org\apache\commons\imaging\formats\tiff\constants\TiffDirectoryConstants.class
+org\apache\commons\imaging\formats\png\ChunkType$ChunkConstructor.class
 org\apache\commons\imaging\formats\png\scanlinefilters\ScanlineFilterPaeth.class
 org\apache\commons\imaging\formats\gif\GifImageData.class
 org\apache\commons\imaging\color\ColorCmyk.class
@@ -30,6 +31,7 @@ org\apache\commons\imaging\formats\tiff\taginfos\TagInfoLong.class
 org\apache\commons\imaging\formats\jpeg\iptc\IptcConstants.class
 org\apache\commons\imaging\formats\icns\IcnsImageParser$IcnsElement.class
 org\apache\commons\imaging\formats\tiff\constants\TiffConstants.class
+org\apache\commons\imaging\formats\png\Extension.class
 org\apache\commons\imaging\formats\icns\IcnsImageParser$IcnsHeader.class
 org\apache\commons\imaging\formats\gif\GifImageMetadata.class
 org\apache\commons\imaging\formats\pnm\PgmFileInfo.class
@@ -360,6 +362,7 @@ org\apache\commons\imaging\formats\webp\chunks\WebPChunkAlph.class
 org\apache\commons\imaging\formats\tiff\constants\GpsTagConstants.class
 org\apache\commons\imaging\formats\tiff\constants\GeoTiffTagConstants.class
 org\apache\commons\imaging\formats\ico\IcoImageParser$BitmapHeader.class
+org\apache\commons\imaging\formats\png\PngImageMetadata.class
 org\apache\commons\imaging\package-info.class
 org\apache\commons\imaging\formats\icns\IcnsType.class
 org\apache\commons\imaging\formats\jpeg\decoder\Dct.class

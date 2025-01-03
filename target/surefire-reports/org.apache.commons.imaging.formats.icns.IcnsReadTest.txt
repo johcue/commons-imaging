@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.apache.commons.imaging.formats.icns.IcnsReadTest
 -------------------------------------------------------------------------------
-Tests run: 9, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.213 s -- in org.apache.commons.imaging.formats.icns.IcnsReadTest
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.170 s -- in org.apache.commons.imaging.formats.icns.IcnsReadTest

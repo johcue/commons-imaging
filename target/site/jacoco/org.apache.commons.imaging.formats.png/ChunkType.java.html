@@ -16,81 +16,218 @@
  */
 package org.apache.commons.imaging.formats.png;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.imaging.common.BinaryFunctions;
+import org.apache.commons.imaging.formats.png.chunks.PngChunk;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkGama;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkIccp;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkIdat;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkIhdr;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkItxt;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkPhys;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkPlte;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkScal;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkText;
+import org.apache.commons.imaging.formats.png.chunks.PngChunkZtxt;
 
 /**
- * Type of a PNG chunk.
+ * Type of PNG chunk.
  *
  * @see &lt;a href=&quot;https://www.w3.org/TR/png/#11Chunks&quot;&gt;Portable Network Graphics Specification - Chunk specifications&lt;/a&gt;
  */
-<span class="fc" id="L28">public enum ChunkType {</span>
+<span class="fc" id="L40">public enum ChunkType {</span>
 
-    /** Image header */
-<span class="fc" id="L31">    IHDR,</span>
+    /**
+     * Image header
+     */
+<span class="fc" id="L45">    IHDR(PngChunkIhdr::new),</span>
 
-    /** Palette */
-<span class="fc" id="L34">    PLTE,</span>
+    /**
+     * Palette
+     */
+<span class="fc" id="L50">    PLTE(PngChunkPlte::new),</span>
 
-    /** Image data */
-<span class="fc" id="L37">    IDAT,</span>
+    /**
+     * Image data
+     */
+<span class="fc" id="L55">    IDAT(PngChunkIdat::new),</span>
 
-    /** Image trailer */
-<span class="fc" id="L40">    IEND,</span>
+    /**
+     * Image trailer
+     */
+<span class="fc" id="L60">    IEND,</span>
 
-    /** Transparency */
-<span class="fc" id="L43">    tRNS,</span>
+    /**
+     * Transparency
+     */
+<span class="fc" id="L65">    tRNS,</span>
 
-    /** Primary chromaticities and white point */
-<span class="fc" id="L46">    cHRM,</span>
+    /**
+     * Primary chromaticities and white point
+     */
+<span class="fc" id="L70">    cHRM,</span>
 
-    /** Image gamma */
-<span class="fc" id="L49">    gAMA,</span>
+    /**
+     * Image gamma
+     */
+<span class="fc" id="L75">    gAMA(PngChunkGama::new),</span>
 
-    /** Embedded ICC profile */
-<span class="fc" id="L52">    iCCP,</span>
+    /**
+     * Embedded ICC profile
+     */
+<span class="fc" id="L80">    iCCP(PngChunkIccp::new),</span>
 
-    /** Significant bits */
-<span class="fc" id="L55">    sBIT,</span>
+    /**
+     * Significant bits
+     */
+<span class="fc" id="L85">    sBIT,</span>
 
-    /** Standard RGB color space */
-<span class="fc" id="L58">    sRGB,</span>
+    /**
+     * Standard RGB color space
+     */
+<span class="fc" id="L90">    sRGB,</span>
 
-    /** Textual data */
-<span class="fc" id="L61">    tEXt,</span>
+    /**
+     * Textual data
+     */
+<span class="fc" id="L95">    tEXt(PngChunkText::new),</span>
 
-    /** Compressed textual data */
-<span class="fc" id="L64">    zTXt,</span>
+    /**
+     * Compressed textual data
+     */
+<span class="fc" id="L100">    zTXt(PngChunkZtxt::new),</span>
 
-    /** International textual data */
-<span class="fc" id="L67">    iTXt,</span>
+    /**
+     * International textual data
+     */
+<span class="fc" id="L105">    iTXt(PngChunkItxt::new),</span>
 
-    /** Background color */
-<span class="fc" id="L70">    bKGD,</span>
+    /**
+     * Background colour
+     */
+<span class="fc" id="L110">    bKGD,</span>
 
-    /** Image histogram */
-<span class="fc" id="L73">    hIST,</span>
+    /**
+     * Image histogram
+     */
+<span class="fc" id="L115">    hIST,</span>
 
-    /** Physical pixel dimensions */
-<span class="fc" id="L76">    pHYs,</span>
+    /**
+     * Physical pixel dimensions
+     */
+<span class="fc" id="L120">    pHYs(PngChunkPhys::new),</span>
 
-    /** Physical scale */
-<span class="fc" id="L79">    sCAL,</span>
+    /**
+     * Suggested palette
+     */
+<span class="fc" id="L125">    sPLT,</span>
 
-    /** Suggested palette */
-<span class="fc" id="L82">    sPLT,</span>
+    /**
+     * Image last-modification time
+     */
+<span class="fc" id="L130">    tIME,</span>
 
-    /** Image last-modification time */
-<span class="fc" id="L85">    tIME;</span>
+    /*
+     * PNGEXT
+     */
+
+    /**
+     * Image offset
+     *
+     * @since 1.0-alpha6
+     */
+<span class="fc" id="L141">    oFFs(Extension.PNGEXT),</span>
+
+    /**
+     * Calibration of pixel values
+     *
+     * @since 1.0-alpha6
+     */
+<span class="fc" id="L148">    pCAL(Extension.PNGEXT),</span>
+
+    /**
+     * Physical scale
+     */
+<span class="fc" id="L153">    sCAL(Extension.PNGEXT, PngChunkScal::new),</span>
+
+    /**
+     * GIF Graphic Control Extension
+     *
+     * @since 1.0-alpha6
+     */
+<span class="fc" id="L160">    gIFg(Extension.PNGEXT),</span>
+
+    /**
+     * GIF Application Extension
+     *
+     * @since 1.0-alpha6
+     */
+<span class="fc" id="L167">    gIFx(Extension.PNGEXT),</span>
+
+    /**
+     * Indicator of Stereo Image
+     *
+     * @since 1.0-alpha6
+     */
+<span class="fc" id="L174">    sTER(Extension.PNGEXT),</span>
+
+    /**
+     * Exchangeable Image File (Exif) Profile
+     *
+     * @since 1.0-alpha6
+     */
+<span class="fc" id="L181">    eXIf(Extension.PNGEXT),</span>
+
+    ;
+
+    @FunctionalInterface
+    private interface ChunkConstructor {
+        PngChunk make(int length, int chunkType, int crc, byte[] bytes) throws IOException;
+    }
+
+<span class="fc" id="L190">    private static final ChunkType[] types = ChunkType.values();</span>
+
+    static ChunkType findType(int chunkType) {
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        for (ChunkType type : types) {</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if (type.value == chunkType) {</span>
+<span class="fc" id="L195">                return type;</span>
+            }
+        }
+<span class="nc" id="L198">        return null;</span>
+    }
+
+    static PngChunk makeChunk(int length, int chunkType, int crc, byte[] bytes) throws IOException {
+<span class="fc" id="L202">        ChunkType type = findType(chunkType);</span>
+<span class="pc bpc" id="L203" title="1 of 4 branches missed.">        return type != null &amp;&amp; type.constructor != null</span>
+<span class="fc" id="L204">                ? type.constructor.make(length, chunkType, crc, bytes)</span>
+<span class="fc" id="L205">                : new PngChunk(length, chunkType, crc, bytes);</span>
+    }
 
     final byte[] array;
     final int value;
+    final Extension extension;
+    final ChunkConstructor constructor;
 
-<span class="fc" id="L90">    ChunkType() {</span>
-<span class="fc" id="L91">        final char[] chars = name().toCharArray();</span>
-<span class="fc" id="L92">        array = name().getBytes(StandardCharsets.UTF_8);</span>
-<span class="fc" id="L93">        value = BinaryFunctions.charsToQuad(chars[0], chars[1], chars[2], chars[3]);</span>
-<span class="fc" id="L94">    }</span>
+    ChunkType() {
+<span class="fc" id="L214">        this(null, null);</span>
+<span class="fc" id="L215">    }</span>
+
+    ChunkType(Extension extension) {
+<span class="fc" id="L218">        this(extension, null);</span>
+<span class="fc" id="L219">    }</span>
+
+    ChunkType(ChunkConstructor constructor) {
+<span class="fc" id="L222">        this(null, constructor);</span>
+<span class="fc" id="L223">    }</span>
+
+<span class="fc" id="L225">    ChunkType(Extension extension, ChunkConstructor constructor) {</span>
+<span class="fc" id="L226">        final char[] chars = name().toCharArray();</span>
+<span class="fc" id="L227">        this.array = name().getBytes(StandardCharsets.UTF_8);</span>
+<span class="fc" id="L228">        this.value = BinaryFunctions.charsToQuad(chars[0], chars[1], chars[2], chars[3]);</span>
+<span class="fc" id="L229">        this.extension = extension;</span>
+<span class="fc" id="L230">        this.constructor = constructor;</span>
+<span class="fc" id="L231">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

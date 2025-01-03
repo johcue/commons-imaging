@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="4.56" tests="132" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="4.92" tests="132" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="CO"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-17\bin"/>
-    <property name="sun.java.command" value="C:\Users\57318\AppData\Local\Temp\surefire336778703287173259\surefirebooter-20250103112429942_3.jar C:\Users\57318\AppData\Local\Temp\surefire336778703287173259 2025-01-03T11-24-29_757-jvmRun1 surefire-20250103112429942_1tmp surefire_0-20250103112429942_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\57318\AppData\Local\Temp\surefire11905346023038279867\surefirebooter-20250103130204711_3.jar C:\Users\57318\AppData\Local\Temp\surefire11905346023038279867 2025-01-03T13-02-04_511-jvmRun1 surefire-20250103130204711_1tmp surefire_0-20250103130204711_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\57318\Documents\MSc_SAL\commons-imaging\target\test-classes;C:\Users\57318\Documents\MSc_SAL\commons-imaging\target\classes;C:\Users\57318\.m2\repository\org\junit\jupiter\junit-jupiter\5.11.2\junit-jupiter-5.11.2.jar;C:\Users\57318\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.11.2\junit-jupiter-api-5.11.2.jar;C:\Users\57318\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\57318\.m2\repository\org\junit\platform\junit-platform-commons\1.11.2\junit-platform-commons-1.11.2.jar;C:\Users\57318\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.11.2\junit-jupiter-engine-5.11.2.jar;C:\Users\57318\.m2\repository\org\junit\platform\junit-platform-engine\1.11.2\junit-platform-engine-1.11.2.jar;C:\Users\57318\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.11.2\junit-jupiter-params-5.11.2.jar;C:\Users\57318\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\57318\.m2\repository\junit\junit\4.8.1\junit-4.8.1.jar;C:\Users\57318\.m2\repository\org\junit\platform\junit-platform-console-standalone\1.9.2\junit-platform-console-standalone-1.9.2.jar;C:\Users\57318\.m2\repository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;C:\Users\57318\.m2\repository\commons-io\commons-io\2.18.0\commons-io-2.18.0.jar;C:\Users\57318\.m2\repository\org\openjdk\jol\jol-core\0.17\jol-core-0.17.jar;C:\Users\57318\.m2\repository\org\apache\commons\commons-lang3\3.17.0\commons-lang3-3.17.0.jar;C:\Users\57318\.m2\repository\org\openjdk\jmh\jmh-core\1.37\jmh-core-1.37.jar;C:\Users\57318\.m2\repository\net\sf\jopt-simple\jopt-simple\5.0.4\jopt-simple-5.0.4.jar;C:\Users\57318\.m2\repository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;C:\Users\57318\.m2\repository\org\openjdk\jmh\jmh-generator-annprocess\1.37\jmh-generator-annprocess-1.37.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\57318\AppData\Local\Temp\surefire336778703287173259\surefirebooter-20250103112429942_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\57318\AppData\Local\Temp\surefire11905346023038279867\surefirebooter-20250103130204711_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.13+10-LTS-268"/>
@@ -58,135 +58,135 @@
     <property name="java.class.version" value="61.0"/>
   </properties>
   <testcase name="testGetInputStreamThrowsNullPointerException" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[1]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.089"/>
-  <testcase name="test(File)[2]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
-  <testcase name="test(File)[3]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[4]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.017"/>
-  <testcase name="test(File)[5]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.004"/>
-  <testcase name="test(File)[6]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
-  <testcase name="test(File)[7]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.606"/>
-  <testcase name="test(File)[8]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[9]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.022"/>
-  <testcase name="test(File)[10]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[11]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[12]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[13]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
+  <testcase name="test(File)[1]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.109"/>
+  <testcase name="test(File)[2]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.011"/>
+  <testcase name="test(File)[3]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.012"/>
+  <testcase name="test(File)[4]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.008"/>
+  <testcase name="test(File)[5]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[6]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[7]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.574"/>
+  <testcase name="test(File)[8]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
+  <testcase name="test(File)[9]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.033"/>
+  <testcase name="test(File)[10]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.018"/>
+  <testcase name="test(File)[11]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
+  <testcase name="test(File)[12]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.008"/>
+  <testcase name="test(File)[13]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
   <testcase name="test(File)[14]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[15]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.038"/>
-  <testcase name="test(File)[16]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
-  <testcase name="test(File)[17]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.11"/>
-  <testcase name="test(File)[18]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[19]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[20]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
-  <testcase name="test(File)[21]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
+  <testcase name="test(File)[15]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.04"/>
+  <testcase name="test(File)[16]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.009"/>
+  <testcase name="test(File)[17]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.111"/>
+  <testcase name="test(File)[18]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
+  <testcase name="test(File)[19]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[20]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[21]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
   <testcase name="test(File)[22]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[23]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.037"/>
-  <testcase name="test(File)[24]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[25]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.017"/>
-  <testcase name="test(File)[26]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[27]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.032"/>
-  <testcase name="test(File)[28]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[29]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.036"/>
-  <testcase name="test(File)[30]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.202"/>
-  <testcase name="test(File)[31]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.467"/>
-  <testcase name="test(File)[32]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.009"/>
-  <testcase name="test(File)[33]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.009"/>
-  <testcase name="test(File)[34]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[35]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[36]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[37]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[38]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[39]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[40]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[41]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[42]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[43]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[44]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
+  <testcase name="test(File)[23]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.045"/>
+  <testcase name="test(File)[24]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
+  <testcase name="test(File)[25]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.011"/>
+  <testcase name="test(File)[26]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[27]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.029"/>
+  <testcase name="test(File)[28]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.008"/>
+  <testcase name="test(File)[29]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.065"/>
+  <testcase name="test(File)[30]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.205"/>
+  <testcase name="test(File)[31]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.506"/>
+  <testcase name="test(File)[32]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.008"/>
+  <testcase name="test(File)[33]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
+  <testcase name="test(File)[34]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
+  <testcase name="test(File)[35]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.004"/>
+  <testcase name="test(File)[36]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.006"/>
+  <testcase name="test(File)[37]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.004"/>
+  <testcase name="test(File)[38]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.001"/>
+  <testcase name="test(File)[39]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.002"/>
+  <testcase name="test(File)[40]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.002"/>
+  <testcase name="test(File)[41]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.001"/>
+  <testcase name="test(File)[42]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.001"/>
+  <testcase name="test(File)[43]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.002"/>
+  <testcase name="test(File)[44]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.001"/>
   <testcase name="test(File)[45]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[46]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[46]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.002"/>
   <testcase name="test(File)[47]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
   <testcase name="test(File)[48]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
   <testcase name="test(File)[49]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
   <testcase name="test(File)[50]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[51]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[52]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.069"/>
-  <testcase name="test(File)[53]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.085"/>
-  <testcase name="test(File)[54]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[55]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[51]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.008"/>
+  <testcase name="test(File)[52]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.083"/>
+  <testcase name="test(File)[53]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.1"/>
+  <testcase name="test(File)[54]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
+  <testcase name="test(File)[55]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.011"/>
   <testcase name="test(File)[56]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.069"/>
-  <testcase name="test(File)[57]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
-  <testcase name="test(File)[58]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[57]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.011"/>
+  <testcase name="test(File)[58]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
   <testcase name="test(File)[59]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[60]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[61]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[62]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[63]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[64]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.132"/>
-  <testcase name="test(File)[65]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.128"/>
-  <testcase name="test(File)[66]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.048"/>
-  <testcase name="test(File)[67]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.126"/>
-  <testcase name="test(File)[68]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.035"/>
-  <testcase name="test(File)[69]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.031"/>
-  <testcase name="test(File)[70]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.054"/>
-  <testcase name="test(File)[71]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.274"/>
-  <testcase name="test(File)[72]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
-  <testcase name="test(File)[73]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.028"/>
-  <testcase name="test(File)[74]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.043"/>
-  <testcase name="test(File)[75]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.031"/>
-  <testcase name="test(File)[76]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[77]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
-  <testcase name="test(File)[78]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
+  <testcase name="test(File)[60]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[61]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[62]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[63]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.009"/>
+  <testcase name="test(File)[64]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.13"/>
+  <testcase name="test(File)[65]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.13"/>
+  <testcase name="test(File)[66]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.035"/>
+  <testcase name="test(File)[67]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.155"/>
+  <testcase name="test(File)[68]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.05"/>
+  <testcase name="test(File)[69]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.04"/>
+  <testcase name="test(File)[70]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.06"/>
+  <testcase name="test(File)[71]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.285"/>
+  <testcase name="test(File)[72]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
+  <testcase name="test(File)[73]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.025"/>
+  <testcase name="test(File)[74]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.075"/>
+  <testcase name="test(File)[75]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.021"/>
+  <testcase name="test(File)[76]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.019"/>
+  <testcase name="test(File)[77]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.025"/>
+  <testcase name="test(File)[78]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.025"/>
   <testcase name="test(File)[79]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
   <testcase name="test(File)[80]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[81]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[82]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[83]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[84]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
-  <testcase name="test(File)[85]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[86]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.022"/>
-  <testcase name="test(File)[87]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[88]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.079"/>
-  <testcase name="test(File)[89]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.036"/>
-  <testcase name="test(File)[90]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.031"/>
-  <testcase name="test(File)[91]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.038"/>
-  <testcase name="test(File)[92]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.063"/>
-  <testcase name="test(File)[93]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.037"/>
-  <testcase name="test(File)[94]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.049"/>
-  <testcase name="test(File)[95]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[96]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.035"/>
-  <testcase name="test(File)[97]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.031"/>
-  <testcase name="test(File)[98]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.032"/>
-  <testcase name="test(File)[99]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.031"/>
-  <testcase name="test(File)[100]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.022"/>
-  <testcase name="test(File)[101]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[102]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
-  <testcase name="test(File)[103]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[104]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[105]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.184"/>
-  <testcase name="test(File)[106]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[107]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[108]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
-  <testcase name="test(File)[109]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[110]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[111]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.031"/>
-  <testcase name="test(File)[112]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[113]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.047"/>
-  <testcase name="test(File)[114]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.053"/>
-  <testcase name="test(File)[115]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[81]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[82]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[83]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
+  <testcase name="test(File)[84]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[85]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.004"/>
+  <testcase name="test(File)[86]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.011"/>
+  <testcase name="test(File)[87]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[88]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.07"/>
+  <testcase name="test(File)[89]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.05"/>
+  <testcase name="test(File)[90]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.03"/>
+  <testcase name="test(File)[91]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.021"/>
+  <testcase name="test(File)[92]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.069"/>
+  <testcase name="test(File)[93]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.051"/>
+  <testcase name="test(File)[94]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.045"/>
+  <testcase name="test(File)[95]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.035"/>
+  <testcase name="test(File)[96]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.025"/>
+  <testcase name="test(File)[97]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.065"/>
+  <testcase name="test(File)[98]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.05"/>
+  <testcase name="test(File)[99]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.03"/>
+  <testcase name="test(File)[100]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.032"/>
+  <testcase name="test(File)[101]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.025"/>
+  <testcase name="test(File)[102]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.024"/>
+  <testcase name="test(File)[103]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.014"/>
+  <testcase name="test(File)[104]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.008"/>
+  <testcase name="test(File)[105]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.164"/>
+  <testcase name="test(File)[106]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
+  <testcase name="test(File)[107]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
+  <testcase name="test(File)[108]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
+  <testcase name="test(File)[109]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.03"/>
+  <testcase name="test(File)[110]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.02"/>
+  <testcase name="test(File)[111]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.023"/>
+  <testcase name="test(File)[112]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.024"/>
+  <testcase name="test(File)[113]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.061"/>
+  <testcase name="test(File)[114]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.055"/>
+  <testcase name="test(File)[115]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.011"/>
   <testcase name="test(File)[116]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.079"/>
-  <testcase name="test(File)[117]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[118]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.084"/>
-  <testcase name="test(File)[119]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.037"/>
-  <testcase name="test(File)[120]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
-  <testcase name="test(File)[121]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[122]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[123]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[124]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.015"/>
+  <testcase name="test(File)[117]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[118]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.08"/>
+  <testcase name="test(File)[119]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.05"/>
+  <testcase name="test(File)[120]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[121]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
+  <testcase name="test(File)[122]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
+  <testcase name="test(File)[123]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.005"/>
+  <testcase name="test(File)[124]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
   <testcase name="test(File)[125]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[126]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
+  <testcase name="test(File)[126]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
   <testcase name="test(File)[127]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
   <testcase name="test(File)[128]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
   <testcase name="test(File)[129]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[130]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
-  <testcase name="test(File)[131]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.016"/>
+  <testcase name="test(File)[130]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.01"/>
+  <testcase name="test(File)[131]" classname="org.apache.commons.imaging.bytesource.ByteSourceImageTest" time="0.0"/>
 </testsuite>

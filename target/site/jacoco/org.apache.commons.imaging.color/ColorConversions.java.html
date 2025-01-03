@@ -648,7 +648,7 @@ public final class ColorConversions {
 
 <span class="fc" id="L649">        final int alpha = 0xff;</span>
 
-<span class="fc" id="L651">        return alpha &lt;&lt; 24 | red &lt;&lt; 16 | green &lt;&lt; 8 | blue;</span>
+<span class="fc" id="L651">        return alpha &lt;&lt; 24 | red &lt;&lt; 16 | green &lt;&lt; 8 | blue &lt;&lt; 0;</span>
     }
 
     private static int convertRgbToRgb(int red, int green, int blue) {
@@ -658,7 +658,7 @@ public final class ColorConversions {
 
 <span class="nc" id="L659">        final int alpha = 0xff;</span>
 
-<span class="nc" id="L661">        return alpha &lt;&lt; 24 | red &lt;&lt; 16 | green &lt;&lt; 8 | blue;</span>
+<span class="nc" id="L661">        return alpha &lt;&lt; 24 | red &lt;&lt; 16 | green &lt;&lt; 8 | blue &lt;&lt; 0;</span>
     }
 
     // See also c# implementation:

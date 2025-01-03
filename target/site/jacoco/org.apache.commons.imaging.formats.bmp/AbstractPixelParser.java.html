@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
+import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageBuilder;
 
 abstract class AbstractPixelParser {
@@ -31,25 +32,25 @@ abstract class AbstractPixelParser {
 
     final InputStream is;
 
-<span class="fc" id="L34">    AbstractPixelParser(final BmpHeaderInfo bmpHeaderInfo, final byte[] colorTable, final byte[] imageData) {</span>
-<span class="fc" id="L35">        this.bhi = Objects.requireNonNull(bmpHeaderInfo, &quot;bmpHeaderInfo&quot;);</span>
-<span class="fc" id="L36">        this.colorTable = colorTable;</span>
-<span class="fc" id="L37">        this.imageData = Objects.requireNonNull(imageData, &quot;imageData&quot;);</span>
+<span class="fc" id="L35">    AbstractPixelParser(final BmpHeaderInfo bmpHeaderInfo, final byte[] colorTable, final byte[] imageData) {</span>
+<span class="fc" id="L36">        this.bhi = Objects.requireNonNull(bmpHeaderInfo, &quot;bmpHeaderInfo&quot;);</span>
+<span class="fc" id="L37">        this.colorTable = colorTable;</span>
+<span class="fc" id="L38">        this.imageData = Objects.requireNonNull(imageData, &quot;imageData&quot;);</span>
 
-<span class="fc" id="L39">        is = new ByteArrayInputStream(imageData);</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L40">        is = new ByteArrayInputStream(imageData);</span>
+<span class="fc" id="L41">    }</span>
 
     int getColorTableRgb(final int index) {
-<span class="fc" id="L43">        final int actual = index * 4;</span>
-<span class="fc" id="L44">        final int blue = 0xff &amp; colorTable[actual];</span>
-<span class="fc" id="L45">        final int green = 0xff &amp; colorTable[actual + 1];</span>
-<span class="fc" id="L46">        final int red = 0xff &amp; colorTable[actual + 2];</span>
-<span class="fc" id="L47">        final int alpha = 0xff;</span>
+<span class="fc" id="L44">        final int actual = index * 4;</span>
+<span class="fc" id="L45">        final int blue = 0xff &amp; colorTable[actual + 0];</span>
+<span class="fc" id="L46">        final int green = 0xff &amp; colorTable[actual + 1];</span>
+<span class="fc" id="L47">        final int red = 0xff &amp; colorTable[actual + 2];</span>
+<span class="fc" id="L48">        final int alpha = 0xff;</span>
 
-<span class="fc" id="L49">        return alpha &lt;&lt; 24 | red &lt;&lt; 16 | green &lt;&lt; 8 | blue;</span>
+<span class="fc" id="L50">        return alpha &lt;&lt; 24 | red &lt;&lt; 16 | green &lt;&lt; 8 | blue &lt;&lt; 0;</span>
     }
 
-    public abstract void processImage(ImageBuilder imageBuilder) throws IOException;
+    public abstract void processImage(ImageBuilder imageBuilder) throws ImagingException, IOException;
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

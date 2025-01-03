@@ -433,7 +433,7 @@ public abstract class AbstractTiffImageWriter {
 
 <span class="fc" id="L434">        int t4Options = 0;</span>
 <span class="fc" id="L435">        int t6Options = 0;</span>
-<span class="pc bpc" id="L436" title="4 of 8 branches missed.">        switch (compression) {</span>
+<span class="pc bpc" id="L436" title="1 of 8 branches missed.">        switch (compression) {</span>
         case TiffConstants.COMPRESSION_CCITT_1D:
 <span class="fc bfc" id="L438" title="All 2 branches covered.">            for (int i = 0; i &lt; strips.length; i++) {</span>
 <span class="fc" id="L439">                strips[i] = T4AndT6Compression.compressModifiedHuffman(strips[i], width, strips[i].length / ((width + 7) / 8));</span>
@@ -476,10 +476,10 @@ public abstract class AbstractTiffImageWriter {
 <span class="fc" id="L476">            break;</span>
         }
         case TiffConstants.COMPRESSION_PACKBITS:
-<span class="nc bnc" id="L479" title="All 2 branches missed.">            for (int i = 0; i &lt; strips.length; i++) {</span>
-<span class="nc" id="L480">                strips[i] = PackBits.compress(strips[i]);</span>
+<span class="fc bfc" id="L479" title="All 2 branches covered.">            for (int i = 0; i &lt; strips.length; i++) {</span>
+<span class="fc" id="L480">                strips[i] = PackBits.compress(strips[i]);</span>
             }
-<span class="nc" id="L482">            break;</span>
+<span class="fc" id="L482">            break;</span>
         case TiffConstants.COMPRESSION_LZW:
 <span class="fc" id="L484">            predictor = TiffTagConstants.PREDICTOR_VALUE_HORIZONTAL_DIFFERENCING;</span>
 <span class="fc bfc" id="L485" title="All 2 branches covered.">            for (int i = 0; i &lt; strips.length; i++) {</span>
@@ -493,14 +493,14 @@ public abstract class AbstractTiffImageWriter {
             }
 <span class="fc" id="L494">            break;</span>
         case TiffConstants.COMPRESSION_DEFLATE_ADOBE:
-<span class="nc" id="L496">            predictor = TiffTagConstants.PREDICTOR_VALUE_HORIZONTAL_DIFFERENCING;</span>
-<span class="nc bnc" id="L497" title="All 2 branches missed.">            for (int i = 0; i &lt; strips.length; i++) {</span>
-<span class="nc" id="L498">                applyPredictor(width, samplesPerPixel, strips[i]);</span>
-<span class="nc" id="L499">                strips[i] = ZlibDeflate.compress(strips[i]);</span>
+<span class="fc" id="L496">            predictor = TiffTagConstants.PREDICTOR_VALUE_HORIZONTAL_DIFFERENCING;</span>
+<span class="fc bfc" id="L497" title="All 2 branches covered.">            for (int i = 0; i &lt; strips.length; i++) {</span>
+<span class="fc" id="L498">                applyPredictor(width, samplesPerPixel, strips[i]);</span>
+<span class="fc" id="L499">                strips[i] = ZlibDeflate.compress(strips[i]);</span>
             }
-<span class="nc" id="L501">            break;</span>
+<span class="fc" id="L501">            break;</span>
         case TiffConstants.COMPRESSION_UNCOMPRESSED:
-<span class="nc" id="L503">            break;</span>
+<span class="fc" id="L503">            break;</span>
         default:
 <span class="nc" id="L505">            throw new ImagingException(</span>
                     &quot;Invalid compression parameter (Only CCITT 1D/Group 3/Group 4, LZW, Packbits, Zlib Deflate and uncompressed supported).&quot;);
