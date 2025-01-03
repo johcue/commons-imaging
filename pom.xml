@@ -67,11 +67,9 @@
     <commons.jacoco.branchRatio>0.64</commons.jacoco.branchRatio>
     <commons.jacoco.lineRatio>0.77</commons.jacoco.lineRatio>
     <commons.jacoco.complexityRatio>0.60</commons.jacoco.complexityRatio>
+    <sonar.organization>johcue</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
-<properties>
-   <sonar.organization>johcue</sonar.organization>
-   <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-</properties>
   <scm>
     <connection>scm:git:http://gitbox.apache.org/repos/asf/commons-imaging.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/commons-imaging.git</developerConnection>
